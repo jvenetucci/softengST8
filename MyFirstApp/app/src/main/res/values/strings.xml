@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My First App</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="textview">TextView</string>
+    <string name="button_number">Number Mode</string>
+    <string name="button_math">Math Mode</string>
+    <string name="button_high_score">High Scores</string>
+</resources>
