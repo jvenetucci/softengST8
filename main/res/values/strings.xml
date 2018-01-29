@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Sliding Tiles</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="number">Number Mode</string>
+    <string name="math">Math Mode</string>
+    <string name="score">High Score</string>
+    <string name="solo">1 Player</string>
+    <string name="comp">VS. AI</string>
+    <string name="multi">VS. Player</string>
+    <string name="home">Home</string>
+    <string name="back">Back</string>
+</resources>
