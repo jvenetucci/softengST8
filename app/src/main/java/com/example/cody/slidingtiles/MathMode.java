@@ -41,8 +41,8 @@ public class MathMode extends AppCompatActivity {
         float emptyY = emptyTile.getY();
         float emptyX = emptyTile.getX();
 
-        if (((Math.abs(currentX - emptyX) == 180) && (currentY == emptyY)) || ((Math.abs(currentY - emptyY) == 180) && (currentX == emptyX))) {
-//            // Test code to display values. To be removed for final presentation.
+        if (((Math.abs(currentX - emptyX) == 150) && (currentY == emptyY)) || ((Math.abs(currentY - emptyY) == 144) && (currentX == emptyX))) {
+            // Test code to display values. To be removed for final presentation.
 //            TextView text = (TextView) findViewById(R.id.CurrentX);
 //            text.setText(Float.toString(currentX));
 //            text = (TextView) findViewById(R.id.CurrentY);
@@ -51,13 +51,11 @@ public class MathMode extends AppCompatActivity {
 //            text.setText(Float.toString(emptyX));
 //            text = (TextView) findViewById(R.id.EmptyY);
 //            text.setText(Float.toString(emptyY));
-//
+
             //Code that moves the TextViews
             tile.animate().x(emptyX).y(emptyY);
             emptyTile.animate().x(currentX).y(currentY);
         }
-        tile.animate().x(emptyX).y(emptyY);
-        emptyTile.animate().x(currentX).y(currentY);
     }
 
     // Takes a 2-d array and maps it to UI elements
