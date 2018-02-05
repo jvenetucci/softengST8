@@ -189,38 +189,39 @@ public class NumberMode extends AppCompatActivity {
     public static void moveTiles(Context context, String direction, int position) {
 
         // Upper-left-corner tile
+
         if (position == 0) {
 
-            if (direction.equals(right)) swap(context, position, 1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
+            if (direction.equals(right) && (tileList[position+1].equals(String.valueOf(24)))) swap(context, position, 1);
+            else if (direction.equals(down)&& (tileList[position+5].equals(String.valueOf(24)))) swap(context, position, COLUMNS);
             else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
 
             // Upper-center tiles
         } else if (position > 0 && position < COLUMNS - 1) {
-            if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
-            else if (direction.equals(right)) swap(context, position, 1);
+            if (direction.equals(left)&& (tileList[position-1].equals(String.valueOf(24)))) swap(context, position, -1);
+            else if (direction.equals(down)&& (tileList[position+5].equals(String.valueOf(24)))) swap(context, position, COLUMNS);
+            else if (direction.equals(right)&& (tileList[position+1].equals(String.valueOf(24)))) swap(context, position, 1);
             else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
 
             // Upper-right-corner tile
         } else if (position == COLUMNS - 1) {
-            if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
+            if (direction.equals(left)&& (tileList[position-1].equals(String.valueOf(24)))) swap(context, position, -1);
+            else if (direction.equals(down)&& (tileList[position+5].equals(String.valueOf(24)))) swap(context, position, COLUMNS);
             else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
 
             // Left-side tiles
         } else if (position > COLUMNS - 1 && position < DIMENSIONS - COLUMNS &&
                 position % COLUMNS == 0) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
+            if (direction.equals(up)&& (tileList[position-5].equals(String.valueOf(24)))) swap(context, position, -COLUMNS);
+            else if (direction.equals(right)&& (tileList[position+1].equals(String.valueOf(24)))) swap(context, position, 1);
+            else if (direction.equals(down)&& (tileList[position+5].equals(String.valueOf(24)))) swap(context, position, COLUMNS);
             else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
 
             // Right-side AND bottom-right-corner tiles
         } else if (position == COLUMNS * 2 - 1 || position == COLUMNS * 3 - 1) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(down)) {
+            if (direction.equals(up)&& (tileList[position-5].equals(String.valueOf(24)))) swap(context, position, -COLUMNS);
+            else if (direction.equals(left)&& (tileList[position-1].equals(String.valueOf(24)))) swap(context, position, -1);
+            else if (direction.equals(down)&& (tileList[position+5].equals(String.valueOf(24)))) {
 
                 // Tolerates only the right-side tiles to swap downwards as opposed to the bottom-
                 // right-corner tile.
@@ -231,23 +232,24 @@ public class NumberMode extends AppCompatActivity {
 
             // Bottom-left corner tile
         } else if (position == DIMENSIONS - COLUMNS) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(right)) swap(context, position, 1);
+            if (direction.equals(up)&& (tileList[position-5].equals(String.valueOf(24)))) swap(context, position, -COLUMNS);
+            else if (direction.equals(right)&& (tileList[position+1].equals(String.valueOf(24)))) swap(context, position, 1);
             else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
 
             // Bottom-center tiles
         } else if (position < DIMENSIONS - 1 && position > DIMENSIONS - COLUMNS) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(right)) swap(context, position, 1);
+            if (direction.equals(up)&& (tileList[position-5].equals(String.valueOf(24)))) swap(context, position, -COLUMNS);
+            else if (direction.equals(left)&& (tileList[position-1].equals(String.valueOf(24)))) swap(context, position, -1);
+            else if (direction.equals(right)&& (tileList[position+1].equals(String.valueOf(24)))) swap(context, position, 1);
             else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
 
             // Center tiles
         } else {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else swap(context, position, COLUMNS);
+            if (direction.equals(up)&& (tileList[position-5].equals(String.valueOf(24)))) swap(context, position, -COLUMNS);
+            else if (direction.equals(left)&& (tileList[position-1].equals(String.valueOf(24)))) swap(context, position, -1);
+            else if (direction.equals(right)&& (tileList[position+1].equals(String.valueOf(24)))) swap(context, position, 1);
+            else if (direction.equals(down)&& (tileList[position+5].equals(String.valueOf(24))))swap(context, position, COLUMNS);
+            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
         }
     }
 
