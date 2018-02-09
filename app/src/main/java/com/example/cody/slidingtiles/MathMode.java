@@ -12,6 +12,8 @@ public class MathMode extends AppCompatActivity {
 
     int tileMatrix [] [] = new int[5][5];
     Button emptyTileButton;
+    float xTileDistance = 0;
+    float yTileDistance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +29,30 @@ public class MathMode extends AppCompatActivity {
         displayBoardMatrixUI(board);
 
 
+
+    }
+
+    // Function that determines how far apart tile are.
+    // The distance is dependent on screen size.
+    // This should be called in the moveTile() method.
+    private void obtainTileDistance() {
+        View xButton = findViewById(R.id.xButton);
+        View yButton = findViewById(R.id.yButton);
+
+        xTileDistance = Math.abs(xButton.getX() - emptyTileButton.getX());
+        yTileDistance = Math.abs(yButton.getY() - emptyTileButton.getY());
     }
 
     // Switches a tiles position with the empty tile
     // A valid move is if the tile to be moved and the empty tile:
-    // 1) Differ by |180| units in either the x or y plane,
+    // 1) Differ by xTileDistance|yTileDistance units in either the x or y plane,
     // 2) Have the same value in the remaining plane.
-    protected void moveTile(View tile) {
+    public void moveTile(View tile) {
+        // If this is the first time we are calling this, lets get the tile distances
+        if (xTileDistance == 0) {
+            obtainTileDistance();
+        }
+
         float currentX = tile.getX();
         float currentY = tile.getY();
 
@@ -41,17 +60,7 @@ public class MathMode extends AppCompatActivity {
         float emptyY = emptyTile.getY();
         float emptyX = emptyTile.getX();
 
-        if (((Math.abs(currentX - emptyX) == 150) && (currentY == emptyY)) || ((Math.abs(currentY - emptyY) == 144) && (currentX == emptyX))) {
-            // Test code to display values. To be removed for final presentation.
-//            TextView text = (TextView) findViewById(R.id.CurrentX);
-//            text.setText(Float.toString(currentX));
-//            text = (TextView) findViewById(R.id.CurrentY);
-//            text.setText(Float.toString(currentY));
-//            text = (TextView) findViewById(R.id.EmptyX);
-//            text.setText(Float.toString(emptyX));
-//            text = (TextView) findViewById(R.id.EmptyY);
-//            text.setText(Float.toString(emptyY));
-
+        if (((Math.abs(currentX - emptyX) == xTileDistance) && (currentY == emptyY)) || ((Math.abs(currentY - emptyY) == yTileDistance) && (currentX == emptyX))) {
             //Code that moves the TextViews
             tile.animate().x(emptyX).y(emptyY);
             emptyTile.animate().x(currentX).y(currentY);
@@ -113,7 +122,6 @@ public class MathMode extends AppCompatActivity {
             }
         }
     }
-
 }
 
 
