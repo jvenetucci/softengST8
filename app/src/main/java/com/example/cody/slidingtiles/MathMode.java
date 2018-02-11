@@ -1,10 +1,15 @@
 package com.example.cody.slidingtiles;
 
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -14,6 +19,10 @@ public class MathMode extends AppCompatActivity {
     Button emptyTileButton;
     float xTileDistance = 0;
     float yTileDistance = 0;
+    GridLayout board;
+    ViewGroup submissionHistoryWindow;
+    MathSolutionHandler equationHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +34,14 @@ public class MathMode extends AppCompatActivity {
         tileMatrix[4][4] = -1;  //Set this as the blank tile
 
         //Move the contents of the 2-D array to the UI
-        GridLayout board = findViewById(R.id.board);
+        board = findViewById(R.id.board);
         displayBoardMatrixUI(board);
 
+        //Initialize the solution handler
+        equationHandler = new MathSolutionHandler();
 
-
+        //Find the submission history window
+        submissionHistoryWindow = findViewById(R.id.submissionHistory);
     }
 
     // Function that determines how far apart tile are.
@@ -41,6 +53,63 @@ public class MathMode extends AppCompatActivity {
 
         xTileDistance = Math.abs(xButton.getX() - emptyTileButton.getX());
         yTileDistance = Math.abs(yButton.getY() - emptyTileButton.getY());
+    }
+
+    // General onTouchEvent used to submit player solutions
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int xPos = (int) event.getX();
+        int yPos = (int) event.getY();
+
+        int action = event.getAction();
+
+        // While the user's finger is on the screen, lets record their submission.
+        // When the user lifts up their finger, that signals the end of their submission
+        if (action == MotionEvent.ACTION_UP) {
+            TextView submission = new TextView(this);
+            int score = equationHandler.solve();
+            if (score < 0) {
+                submission.setTextColor(Color.RED);
+            } else {
+                submission.setTextColor(Color.GREEN);
+            }
+            submission.setTextSize(20);
+            submission.setBackgroundColor(Color.GRAY);
+            submission.setText(equationHandler.getEquationString());
+            submissionHistoryWindow.addView(submission);
+            equationHandler.resetHandler();
+            return true;
+        } else {
+            Button tile = (Button) findViewAt(board, xPos, yPos);
+            if (tile != null) {
+                equationHandler.addTile(tile);
+            }
+            return true;
+        }
+    }
+
+    // Finds view within a Gridlayout
+    // x & y are coordinates relative to layout.
+    // Code Courtesy of Luke, with slight modifications by Joseph Venetucci
+    // https://stackoverflow.com/a/36037991
+    private View findViewAt(GridLayout viewGroup, int x, int y) {
+        for(int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+            if (child instanceof GridLayout) {
+                View foundView = findViewAt((GridLayout) child, x, y);
+                if (foundView != null && foundView.isShown()) {
+                    return foundView;
+                }
+            } else {
+                int[] location = new int[2];
+                child.getLocationOnScreen(location);
+                Rect rect = new Rect(location[0], location[1], location[0] + child.getWidth(), location[1] + child.getHeight());
+                if (rect.contains(x, y)) {
+                    return child;
+                }
+            }
+        }
+        return null;
     }
 
     // Switches a tiles position with the empty tile
