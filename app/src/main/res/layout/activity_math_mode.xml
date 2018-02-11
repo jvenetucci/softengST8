@@ -364,6 +364,16 @@
         <!--app:layout_constraintBaseline_toBaselineOf="@+id/textView2"-->
         <!--app:layout_constraintEnd_toEndOf="parent" />-->
 
+    <Button
+        android:id="@+id/btnShuffle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/shuffle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
     <!--<TextView-->
         <!--android:id="@+id/CurrentX"-->
         <!--android:layout_width="wrap_content"-->

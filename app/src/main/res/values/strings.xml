@@ -16,4 +16,5 @@
     <string name="DefaultScore">000</string>
     <string name="tileString">Tile</string>
     <string name="submission_history_title">Submission History</string>
+    <string name="shuffle">SHUFFLE</string>
 </resources>
