@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/number_mode"
+        android:textSize="25sp" />
+    <Button
+        android:id="@+id/btnSolo"
+        android:text="@string/solo"
+        android:textSize="25sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/num"
+        android:layout_marginTop="50dp"/>
+    <Button
+        android:id="@+id/btnComp"
+        android:text="@string/comp"
+        android:textSize="25sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnSolo"
+        android:layout_marginTop="50dp" />
+
+    <Button
+        android:id="@+id/btnScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnComp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="@string/high_scores"
+        android:textSize="25sp" />
+    <Button
+        android:id="@+id/btnBack"
+        android:text="@string/back"
+        android:textSize="25sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnScore"
+        android:layout_marginTop="50dp"/>
+
+</RelativeLayout>
