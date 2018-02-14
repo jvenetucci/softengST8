@@ -17,4 +17,7 @@
     <string name="tileString">Tile</string>
     <string name="submission_history_title">Submission History</string>
     <string name="shuffle">SHUFFLE</string>
+    <string name="pauseButtonLabel">Pause</string>
+    <string name="startButtonLabel">Play</string>
+    <string name="timerVal">0:00:00</string>
 </resources>
