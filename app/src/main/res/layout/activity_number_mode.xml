@@ -2,11 +2,16 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/grid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.cody.slidingtiles.NumberMode">
 
+    <com.example.cody.slidingtiles.GestureDetectGridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/grid">
+
+    </com.example.cody.slidingtiles.GestureDetectGridView>
     <!--<EditText-->
         <!--android:id="@+id/editText"-->
         <!--android:layout_width="wrap_content"-->
