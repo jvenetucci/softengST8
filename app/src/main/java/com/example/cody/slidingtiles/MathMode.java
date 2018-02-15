@@ -19,6 +19,7 @@ public class MathMode extends AppCompatActivity {
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
     float yTileDistance = 0;
+    int currentScore = 0;
 
     // Timer variables
     private Button startButton;
@@ -165,10 +166,15 @@ public class MathMode extends AppCompatActivity {
         if (action == MotionEvent.ACTION_UP) {
             TextView submission = new TextView(this);
             int score = equationHandler.solve();
-            if (score < 0) {
+            if (score == -1) {
                 submission.setTextColor(Color.RED);
+            } else if(score == 0 ) {
+                submission.setTextColor(Color.BLUE);
+            } else if(score == -2 ) {
+                submission.setTextColor(Color.YELLOW);
             } else {
                 submission.setTextColor(Color.GREEN);
+                updateScore(score);
             }
             submission.setTextSize(20);
             submission.setBackgroundColor(Color.GRAY);
@@ -239,6 +245,11 @@ public class MathMode extends AppCompatActivity {
         displayBoardMatrixUI(board);
     }
 
+    private void updateScore(int score){
+        currentScore += score;
+        TextView playerScore = findViewById(R.id.currentScoreTextView);
+        playerScore.setText(String.valueOf(currentScore));
+    }
 }
 
 
