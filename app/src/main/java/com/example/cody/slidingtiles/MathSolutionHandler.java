@@ -15,12 +15,14 @@ import java.util.LinkedHashSet;
  */
 class MathSolutionHandler {
     LinkedHashSet<Button> tiles; //Used over HashSet because it keeps the insertion order
-    ArrayList<int []> solutionBlackList; //Keep a list of valid submitted solutions
+//    ArrayList<int []> solutionBlackList; //Keep a list of valid submitted solutions
+    ArrayList<String> solutionBlackList2;
 
 
     MathSolutionHandler() {
         tiles = new LinkedHashSet<>();
-        solutionBlackList = new ArrayList<>();
+//        solutionBlackList = new ArrayList<>();
+        solutionBlackList2 = new ArrayList<>();
     }
 
     // Adds a tile to the tiles collection.
@@ -101,6 +103,14 @@ class MathSolutionHandler {
                 break;
             default:
                 break;
+        }
+        //check the solution blacklist before giving points
+        String equaString = new String();
+        equaString = getEquationString(equation);
+        if (solutionBlackList2.contains(equaString)){
+                score = 0;
+        }else {
+            solutionBlackList2.add(equaString);
         }
         return score;
 

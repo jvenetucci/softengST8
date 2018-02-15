@@ -198,6 +198,7 @@ public class MathMode extends AppCompatActivity {
         displayBoardMatrixUI(board);
     }
 
+    // Updates the score accordingly
     private void updateScore(int score){
         currentScore += score;
         TextView playerScore = findViewById(R.id.currentScoreTextView);
