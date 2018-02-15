@@ -40,12 +40,71 @@ class MathSolutionHandler {
     // Solves the player submitted solution
     // Returns the value of the equation which should be added to players score
     // Returns -1 for invalid solutions
-    int solve() {
+    public int solve() {
+        int score = 0;
         if (tiles.size() != 5) {
             return -1;
         }
-//        int equation[] = getEquationNumberArray();
-        return -1;
+        int equation[] = getEquationNumberArray();
+        // format check
+        for (int i = 0; i <5; i++ ){
+            if(equation[i] == -1){
+                return -2;
+            }
+            if (i % 2 == 0){
+                if (equation[i] > 11){
+                    return -2;
+                }
+            }
+            else{
+                if (equation [i] < 9){
+                    return -2;
+                }
+            }
+        }
+
+        // change to the form Num Sym Num EQ Num
+        if (equation [1] == 10) {
+            int temp[]= new int[5];
+            for(int i = 0; i <5; i++){
+                temp[i] = equation[4-i];
+            }
+            for(int j = 0; j <5; j++){
+                equation[j] = temp[j];
+            }
+        }
+        // equation check.
+        switch(equation[1]){
+            case 11://add
+                if(equation[4] == equation[0] + equation[2]){
+                    score = equation[4];
+                }
+                break;
+            case 12://subtract
+                if(equation[0] == 0){
+                    score = 0;
+                }else if(equation[4] == equation[0] - equation[2]){
+                    score = equation[4];
+                }
+                break;
+            case 13://multiply
+                if(equation[4] == equation[0] * equation[2]){
+                    score = equation[4];
+                }
+                break;
+            case 14://divide
+                if(equation[0] == 0 || equation[2] == 0 || equation[4] == 0){
+                    return 0;
+                }else if(equation[4] == equation[0] / equation[2]){
+                    score = equation[4];
+                }
+                break;
+            default:
+                break;
+        }
+        return score;
+
+
     }
 
     // Resets the handler by clearing the tiles from the collection
@@ -78,11 +137,13 @@ class MathSolutionHandler {
     // Should only be used when the collection has 5 tiles.
     private int[] getEquationNumberArray() {
         int equationNumberArray[] = new int [5];
-        for (int i = 0; i < 5; i++) {
+        int i = 0;
+//        for (int i = 0; i < 5; i++) {
             for (Button tile: tiles) {
                 equationNumberArray[i] = convertToIntValue(tile);
+                i++;
             }
-        }
+//        }
         return equationNumberArray;
     }
 
