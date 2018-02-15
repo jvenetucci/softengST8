@@ -165,22 +165,24 @@ public class MathMode extends AppCompatActivity {
         // When the user lifts up their finger, that signals the end of their submission
         if (action == MotionEvent.ACTION_UP) {
             TextView submission = new TextView(this);
-            int score = equationHandler.solve();
-            if (score == -1) {
-                submission.setTextColor(Color.RED);
-            } else if(score == 0 ) {
-                submission.setTextColor(Color.BLUE);
-            } else if(score == -2 ) {
-                submission.setTextColor(Color.YELLOW);
-            } else {
-                submission.setTextColor(Color.GREEN);
-                updateScore(score);
+            if (equationHandler.getCountOfSubmittedTiles() != 0) {
+                int score = equationHandler.solve();
+                if (score == -1) {
+                    submission.setTextColor(Color.RED);
+                } else if(score == 0 ) {
+                    submission.setTextColor(Color.BLUE);
+                } else if(score == -2 ) {
+                    submission.setTextColor(Color.YELLOW);
+                } else {
+                    submission.setTextColor(Color.GREEN);
+                    updateScore(score);
+                }
+                submission.setTextSize(20);
+                submission.setBackgroundColor(Color.GRAY);
+                submission.setText(equationHandler.getEquationString());
+                submissionHistoryWindow.addView(submission, 0);
+                equationHandler.resetHandler();
             }
-            submission.setTextSize(20);
-            submission.setBackgroundColor(Color.GRAY);
-            submission.setText(equationHandler.getEquationString());
-            submissionHistoryWindow.addView(submission);
-            equationHandler.resetHandler();
             return true;
         } else {
             Button tile = (Button) findViewAt(board, xPos, yPos);

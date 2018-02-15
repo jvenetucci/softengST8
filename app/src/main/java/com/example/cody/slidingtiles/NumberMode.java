@@ -197,17 +197,4 @@ public class NumberMode extends AppCompatActivity {
         return true; //This should never execute.
     }
 
-    //TBD
-//    private void scramble() {
-//        int index;
-//        String temp;
-//        Random random = new Random();
-//
-//        for (int i = tileList.length - 1; i > 0; i--) {
-//            index = random.nextInt(i + 1);
-//            temp = tileList[index];
-//            tileList[index] = tileList[i];
-//            tileList[i] = temp;
-//        }
-//    }
 }
