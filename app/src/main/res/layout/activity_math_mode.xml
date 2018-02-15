@@ -7,6 +7,52 @@
     tools:context="com.example.cody.slidingtiles.MathMode">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="368dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="68dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/currentScoreTextView"
+            android:layout_width="141dp"
+            android:layout_height="wrap_content"
+            android:text="@string/DefaultScore"
+            app:layout_constraintBaseline_toBaselineOf="@+id/scoreTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/scoreTextView"
+            tools:layout_editor_absoluteX="265dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <Button
+            android:id="@+id/btnShuffle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shuffle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="35dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:text="Score"
+            app:layout_constraintBaseline_toBaselineOf="@+id/btnShuffle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnShuffle"
+            tools:layout_editor_absoluteX="163dp"
+            tools:layout_editor_absoluteY="0dp" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="368dp"
         android:layout_height="44dp"
@@ -18,13 +64,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/timeTextView"
+            android:id="@+id/timerValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@string/timeUpDefault"
+            android:text="@string/timerVal"
             android:textAlignment="center"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -33,45 +80,85 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginLeft="16dp" />
 
-        <TextView
-            android:id="@+id/scoreTextView"
+        <Button
+            android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="@string/score"
-            android:textSize="18sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/timeTextView"
+            android:text="@string/startButtonLabel"
+            app:layout_constraintBaseline_toBaselineOf="@+id/timerValue"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/timeTextView"
+            app:layout_constraintStart_toEndOf="@+id/timerValue"
             android:layout_marginRight="8dp" />
 
-        <TextView
-            android:id="@+id/currentScoreTextView"
+        <Button
+            android:id="@+id/pauseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="@string/DefaultScore"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/scoreTextView"
+            android:text="@string/pauseButtonLabel"
+            app:layout_constraintBaseline_toBaselineOf="@+id/startButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/scoreTextView"
+            app:layout_constraintStart_toEndOf="@+id/startButton"
             android:layout_marginRight="8dp" />
     </android.support.constraint.ConstraintLayout>
+
+    <!--<android.support.constraint.ConstraintLayout-->
+        <!--android:id="@+id/constraintLayout1"-->
+        <!--android:layout_width="368dp"-->
+        <!--android:layout_height="75dp"-->
+        <!--android:layout_marginEnd="24dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--app:layout_constraintEnd_toEndOf="@id/constraintLayout"-->
+        <!--app:layout_constraintStart_toStartOf="ConstraintLayout_Layout"-->
+        <!--app:layout_constraintTop_toTopOf="@id/board">-->
+
+        <!--<Button-->
+            <!--android:id="@+id/btnShuffle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:layout_marginStart="16dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:text="@string/shuffle"-->
+            <!--app:layout_constraintLeft_toLeftOf="@id/scoreTextView"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/constraintLayout1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/scoreTextView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginRight="8dp"-->
+            <!--android:text="@string/score"-->
+            <!--android:textSize="18sp"-->
+            <!--app:layout_constraintBaseline_toBaselineOf="@+id/btnShuffle"-->
+            <!--app:layout_constraintStart_toEndOf="@+id/btnShuffle" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/currentScoreTextView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginRight="8dp"-->
+            <!--android:text="@string/DefaultScore"-->
+            <!--android:textSize="24sp"-->
+            <!--android:textStyle="bold"-->
+            <!--app:layout_constraintBaseline_toBaselineOf="@+id/scoreTextView"-->
+            <!--app:layout_constraintEnd_toEndOf="@id/scoreTextView"-->
+            <!--app:layout_constraintStart_toEndOf="@+id/scoreTextView" />-->
+    <!--</android.support.constraint.ConstraintLayout>-->
 
     <GridLayout
         android:id="@+id/board"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="281dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/submissionHistoryScrollWindow"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintVertical_bias="0.294">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/button13"
@@ -329,88 +416,6 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginLeft="8dp" />
 
-    <!--<TextView-->
-        <!--android:id="@+id/touchE"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="41dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:text="TextView"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--android:layout_marginLeft="8dp" />-->
 
-    <!--<TextView-->
-        <!--android:id="@+id/textView2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:layout_marginEnd="116dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:text="Submission:"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/submission"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/board"-->
-        <!--app:layout_constraintVertical_bias="0.517" />-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/submission"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:textAlignment="center"-->
-        <!--android:textSize="14sp"-->
-        <!--android:textStyle="bold"-->
-        <!--app:layout_constraintBaseline_toBaselineOf="@+id/textView2"-->
-        <!--app:layout_constraintEnd_toEndOf="parent" />-->
-
-    <Button
-        android:id="@+id/btnShuffle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/shuffle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
-    <!--<TextView-->
-        <!--android:id="@+id/CurrentX"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/CurrentY"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:text="TextView"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/CurrentX" />-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/EmptyX"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:text="TextView"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/EmptyY"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:text="TextView"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/EmptyX" />-->
 
 </android.support.constraint.ConstraintLayout>
