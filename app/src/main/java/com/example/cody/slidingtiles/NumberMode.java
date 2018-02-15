@@ -182,6 +182,7 @@ public class NumberMode extends AppCompatActivity {
     // Goes index by index and checks that each one is correct
     protected boolean isSolved(int [][] boardMatrix) {
         int currentCount = 1;
+
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 if (i == 4 && j ==4) { // If we made it to the bottom right corner, its solved!
