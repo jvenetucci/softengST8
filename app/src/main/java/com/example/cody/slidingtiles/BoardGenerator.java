@@ -134,10 +134,12 @@ class BoardGenerator {
         int [][] tileMatrix = new int[5][5];
         List<Integer> list = new ArrayList<>();
         int index = 0;
+        int grabi = 0;
+        int grabj = 0;
 
         //add valid numbers to list
         list.add(-1);
-        for(int i = 1; i < 26; ++i){
+        for(int i = 1; i < 25; ++i){
             list.add(i);
         }
 
@@ -146,11 +148,7 @@ class BoardGenerator {
             Collections.shuffle(list);
         }while(isSolvable(list) == 0);
 
-        //Search for blank and set to bottom right
         //XXX Have to alter rest of code in order to make blank more random
-        int grabi = 0;
-        int grabj = 0;
-
         //transfer valid board to actual tileMatrix
         for(int i = 0; i < 5; ++i){
             for(int j = 0; j < 5; ++j){
