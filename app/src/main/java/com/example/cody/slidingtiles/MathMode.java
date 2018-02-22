@@ -19,7 +19,15 @@ public class MathMode extends AppCompatActivity {
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
     float yTileDistance = 0;
+    private float ySubmittedTile;
+    private float xSubmittedTile;
+    private int axisLock;   // 1 = Vertical solution; 2 = Horizontal solution
     int currentScore = 0;
+
+    //UI Elements
+    Button emptyTileButton;
+    GridLayout board;
+    ViewGroup submissionHistoryWindow;
 
     // Timer variables
     private Button startButton;
@@ -30,11 +38,6 @@ public class MathMode extends AppCompatActivity {
     long timeInMilliseconds = 0L;
     long timeSwapBuff = 0L;
     long updatedTime = 0L;
-
-    //UI Elements
-    Button emptyTileButton;
-    GridLayout board;
-    ViewGroup submissionHistoryWindow;
 
     //Helper Classes
     MathSolutionHandler equationHandler = new MathSolutionHandler();
@@ -66,8 +69,7 @@ public class MathMode extends AppCompatActivity {
 
         //Create a 2-D array of the board
         tileMatrix = boardGen.generateMathModeBoard();
-        tileMatrix[4][4] = -1;  //Set this as the blank tile
-    //    shuffleBoard(tileMatrix);
+//        shuffleBoard(tileMatrix);
 
         //Move the contents of the 2-D array to the UI
         board = findViewById(R.id.board);
@@ -82,11 +84,9 @@ public class MathMode extends AppCompatActivity {
             }
         });
 
-        //Initialize the solution handler
-        equationHandler = new MathSolutionHandler();
-
         //Find the submission history window
         submissionHistoryWindow = findViewById(R.id.submissionHistory);
+
     }
 
     // Timer code
@@ -145,12 +145,14 @@ public class MathMode extends AppCompatActivity {
     // Function that determines how far apart tile are.
     // The distance is dependent on screen size.
     // This should be called in the moveTile() method.
+    // Calculates distances using tiles located in the lower right corner of the board.
     private void obtainTileDistance() {
         View xButton = findViewById(R.id.xButton);
         View yButton = findViewById(R.id.yButton);
+        View lowerRightButton = findViewById(R.id.lowerRightButton);
 
-        xTileDistance = Math.abs(xButton.getX() - emptyTileButton.getX());
-        yTileDistance = Math.abs(yButton.getY() - emptyTileButton.getY());
+        xTileDistance = Math.abs(xButton.getX() - lowerRightButton.getX());
+        yTileDistance = Math.abs(yButton.getY() - lowerRightButton.getY());
     }
 
     // General onTouchEvent used to submit player solutions
@@ -186,8 +188,48 @@ public class MathMode extends AppCompatActivity {
             return true;
         } else {
             Button tile = (Button) findViewAt(board, xPos, yPos);
-            if (tile != null) {
-                equationHandler.addTile(tile);
+            if (tile != null && (equationHandler.getCountOfSubmittedTiles() != 5)) {
+                // If this is the first time we are calling this, lets get the tile distances
+                if (xTileDistance == 0) {
+                    obtainTileDistance();
+                }
+                // The following logic only allows horizontal or vertical solutions
+                int tileCount = equationHandler.getCountOfSubmittedTiles();
+                if (tileCount == 0) {
+                    //This if the first submitted tile, lets get the x,y coords
+                    xSubmittedTile = tile.getX();
+                    ySubmittedTile = tile.getY();
+                    equationHandler.addTile(tile);
+                }else if(tileCount == 1) {
+                    //This is the second tile we are attempting to add.
+                    //Make sure this tile is next to the first tile
+                    //Also depending on its location (above/below or left/right) lock future submissions to either horizontal or vertical
+                    if ((Math.abs(tile.getY() - ySubmittedTile) == yTileDistance) && (tile.getX() == xSubmittedTile)) {
+                        //Vertical Submission
+                        axisLock = 1;
+                        ySubmittedTile = tile.getY();
+                        equationHandler.addTile(tile);
+                    }else if ((Math.abs(tile.getX() - xSubmittedTile) == xTileDistance) && (tile.getY() == ySubmittedTile)) {
+                        //Horizontal Submission
+                        axisLock = 2;
+                        xSubmittedTile = tile.getX();
+                        equationHandler.addTile(tile);
+                    }
+                } else {
+                    //We are attempting to add tiles 3-5
+                    if (axisLock == 1) {    //Vertical Submission
+                        //Check to see if this solution is directly above or below the previous tile
+                        if ((Math.abs(tile.getY() - ySubmittedTile) == yTileDistance) && (tile.getX() == xSubmittedTile)) {
+                            ySubmittedTile = tile.getY();
+                            equationHandler.addTile(tile);
+                        }
+                    }else {                 //Horizontal Submission
+                        if ((Math.abs(tile.getX() - xSubmittedTile) == xTileDistance) && (tile.getY() == ySubmittedTile)) {
+                            xSubmittedTile = tile.getX();
+                            equationHandler.addTile(tile);
+                        }
+                    }
+                }
             }
             return true;
         }
@@ -230,14 +272,13 @@ public class MathMode extends AppCompatActivity {
         float currentX = tile.getX();
         float currentY = tile.getY();
 
-        Button emptyTile = findViewById(R.id.emptyButton);
-        float emptyY = emptyTile.getY();
-        float emptyX = emptyTile.getX();
+        float emptyY = emptyTileButton.getY();
+        float emptyX = emptyTileButton.getX();
 
         if (((Math.abs(currentX - emptyX) == xTileDistance) && (currentY == emptyY)) || ((Math.abs(currentY - emptyY) == yTileDistance) && (currentX == emptyX))) {
             //Code that moves the TextViews
             tile.animate().x(emptyX).y(emptyY);
-            emptyTile.animate().x(currentX).y(currentY);
+            emptyTileButton.animate().x(currentX).y(currentY);
         }
     }
 

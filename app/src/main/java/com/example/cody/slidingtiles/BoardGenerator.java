@@ -125,6 +125,7 @@ class BoardGenerator {
             }
 
         }
+        tileMatrix[4][4] = -1; //Set the empty tile.
         return tileMatrix;
     }
 

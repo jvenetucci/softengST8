@@ -41,11 +41,17 @@ class MathSolutionHandler {
     // Returns the value of the equation which should be added to players score
     // Returns -1 for invalid solutions
     public int solve() {
-        int score = 0;
         if (tiles.size() != 5) {
             return -1;
         }
-        int equation[] = getEquationNumberArray();
+        return solveEquation(getEquationNumberArray());
+    }
+
+    // Verify if the equation passed in as an array is valid
+    // Checks for format, correctness, and if its already been used.
+    int solveEquation(int[] equation) {
+        int score = 0;
+
         // format check
         for (int i = 0; i <5; i++ ){
             if(equation[i] == -1){
@@ -109,8 +115,6 @@ class MathSolutionHandler {
         }
         solutionBlackList.add(equaString);
         return score;
-
-
     }
 
     // Resets the handler by clearing the tiles from the collection
@@ -144,12 +148,10 @@ class MathSolutionHandler {
     protected int[] getEquationNumberArray() {
         int equationNumberArray[] = new int [5];
         int i = 0;
-//        for (int i = 0; i < 5; i++) {
-            for (Button tile: tiles) {
-                equationNumberArray[i] = convertToIntValue(tile);
-                i++;
-            }
-//        }
+        for (Button tile: tiles) {
+            equationNumberArray[i] = convertToIntValue(tile);
+            i++;
+        }
         return equationNumberArray;
     }
 
