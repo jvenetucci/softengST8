@@ -69,16 +69,10 @@ public class NumberMode extends AppCompatActivity {
 
         //Create a 2-D array of the board
         tileMatrix = boardGen.generateNumberModeBoard();
-        //Scramble Board
 
         //Move the contents of the 2-D array to the UI
         board = findViewById(R.id.board);
         displayBoardMatrixUI(board);
-
-        //Find and map the empty tile
-        emptyTileButton = findViewById(R.id.emptyButton);
-
-
     }
 
     // Timer code
@@ -106,8 +100,9 @@ public class NumberMode extends AppCompatActivity {
                 tile = (Button) board.getChildAt(tileCount);
                 if (tileMatrix[i][j] == -1) { // -1 is the empty tile
                     tile.setText(" ");
-                    emptyTileRowIndex = i;
-                    emptyTileColIndex = j;
+                    emptyTileButton = tile;
+                    emptyTileRowIndex = i;  // Used in maintaining state of 2d Array
+                    emptyTileColIndex = j;  // Used in maintaining state of 2d Array
                 } else {
                     tile.setText(Integer.toString(tileMatrix[i][j]));
                 }
@@ -128,12 +123,14 @@ public class NumberMode extends AppCompatActivity {
     // Function that determines how far apart tile are.
     // The distance is dependent on screen size.
     // This should be called in the moveTile() method.
+    // Calculates distances using tiles located in the lower right corner of the board.
     private void obtainTileDistance() {
         View xButton = findViewById(R.id.xButton);
         View yButton = findViewById(R.id.yButton);
+        View lowerRightButton = findViewById(R.id.lowerRightButton);
 
-        xTileDistance = Math.abs(xButton.getX() - emptyTileButton.getX());
-        yTileDistance = Math.abs(yButton.getY() - emptyTileButton.getY());
+        xTileDistance = Math.abs(xButton.getX() - lowerRightButton.getX());
+        yTileDistance = Math.abs(yButton.getY() - lowerRightButton.getY());
     }
 
     // Switches a tiles position with the empty tile
@@ -149,9 +146,8 @@ public class NumberMode extends AppCompatActivity {
         float currentX = tile.getX();
         float currentY = tile.getY();
 
-        Button emptyTile = findViewById(R.id.emptyButton);
-        float emptyY = emptyTile.getY();
-        float emptyX = emptyTile.getX();
+        float emptyY = emptyTileButton.getY();
+        float emptyX = emptyTileButton.getX();
 
         // Move the tiles and update the 2d matrix
         if ((Math.abs(currentX - emptyX) == xTileDistance) && (currentY == emptyY)) { //Horizontal Move
@@ -162,7 +158,7 @@ public class NumberMode extends AppCompatActivity {
             }
             //Code that moves the TextViews
             tile.animate().x(emptyX).y(emptyY);
-            emptyTile.animate().x(currentX).y(currentY);
+            emptyTileButton.animate().x(currentX).y(currentY);
         } else if ((Math.abs(currentY - emptyY) == yTileDistance) && (currentX == emptyX)) { //Vertical Move
             if (currentY < emptyY) { // Above
                 swap(tileMatrix, emptyTileRowIndex - 1, emptyTileColIndex);
@@ -171,7 +167,7 @@ public class NumberMode extends AppCompatActivity {
             }
             //Code that moves the TextViews
             tile.animate().x(emptyX).y(emptyY);
-            emptyTile.animate().x(currentX).y(currentY);
+            emptyTileButton.animate().x(currentX).y(currentY);
         }
     }
 
@@ -189,6 +185,7 @@ public class NumberMode extends AppCompatActivity {
     // Goes index by index and checks that each one is correct
     protected boolean isSolved(int [][] boardMatrix) {
         int currentCount = 1;
+
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 if (i == 4 && j ==4) { // If we made it to the bottom right corner, its solved!
@@ -203,17 +200,4 @@ public class NumberMode extends AppCompatActivity {
         return true; //This should never execute.
     }
 
-    //TBD
-//    private void scramble() {
-//        int index;
-//        String temp;
-//        Random random = new Random();
-//
-//        for (int i = tileList.length - 1; i > 0; i--) {
-//            index = random.nextInt(i + 1);
-//            temp = tileList[index];
-//            tileList[index] = tileList[i];
-//            tileList[i] = temp;
-//        }
-//    }
 }

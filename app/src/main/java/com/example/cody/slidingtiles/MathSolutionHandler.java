@@ -15,14 +15,12 @@ import java.util.LinkedHashSet;
  */
 class MathSolutionHandler {
     LinkedHashSet<Button> tiles; //Used over HashSet because it keeps the insertion order
-//    ArrayList<int []> solutionBlackList; //Keep a list of valid submitted solutions
-    ArrayList<String> solutionBlackList2;
+    ArrayList<String> solutionBlackList; //Keep a list of valid submitted solutions
 
 
     MathSolutionHandler() {
         tiles = new LinkedHashSet<>();
-//        solutionBlackList = new ArrayList<>();
-        solutionBlackList2 = new ArrayList<>();
+        solutionBlackList = new ArrayList<>();
     }
 
     // Adds a tile to the tiles collection.
@@ -43,18 +41,24 @@ class MathSolutionHandler {
     // Returns the value of the equation which should be added to players score
     // Returns -1 for invalid solutions
     public int solve() {
-        int score = 0;
         if (tiles.size() != 5) {
             return -1;
         }
-        int equation[] = getEquationNumberArray();
+        return solveEquation(getEquationNumberArray());
+    }
+
+    // Verify if the equation passed in as an array is valid
+    // Checks for format, correctness, and if its already been used.
+    int solveEquation(int[] equation) {
+        int score = 0;
+
         // format check
         for (int i = 0; i <5; i++ ){
             if(equation[i] == -1){
                 return -2;
             }
             if (i % 2 == 0){
-                if (equation[i] > 11){
+                if (equation[i] > 10){
                     return -2;
                 }
             }
@@ -71,10 +75,15 @@ class MathSolutionHandler {
             for(int i = 0; i <5; i++){
                 temp[i] = equation[4-i];
             }
-            for(int j = 0; j <5; j++){
-                equation[j] = temp[j];
-            }
+            System.arraycopy(temp, 0, equation, 0, 5);
         }
+
+        String equaString;
+        equaString = getEquationString(equation);
+        if(solutionBlackList.contains(equaString)) {
+            return 0;
+        }
+
         // equation check.
         switch(equation[1]){
             case 11://add
@@ -104,17 +113,8 @@ class MathSolutionHandler {
             default:
                 break;
         }
-        //check the solution blacklist before giving points
-        String equaString = new String();
-        equaString = getEquationString(equation);
-        if (solutionBlackList2.contains(equaString)){
-                score = 0;
-        }else {
-            solutionBlackList2.add(equaString);
-        }
+        solutionBlackList.add(equaString);
         return score;
-
-
     }
 
     // Resets the handler by clearing the tiles from the collection
@@ -145,15 +145,13 @@ class MathSolutionHandler {
 
     // Get a 5 element array of integers that represent the equation
     // Should only be used when the collection has 5 tiles.
-    private int[] getEquationNumberArray() {
+    protected int[] getEquationNumberArray() {
         int equationNumberArray[] = new int [5];
         int i = 0;
-//        for (int i = 0; i < 5; i++) {
-            for (Button tile: tiles) {
-                equationNumberArray[i] = convertToIntValue(tile);
-                i++;
-            }
-//        }
+        for (Button tile: tiles) {
+            equationNumberArray[i] = convertToIntValue(tile);
+            i++;
+        }
         return equationNumberArray;
     }
 
@@ -205,5 +203,9 @@ class MathSolutionHandler {
                 stringValue = Integer.toString(value);
                 return stringValue;
         }
+    }
+
+    int getCountOfSubmittedTiles() {
+        return tiles.size();
     }
 }

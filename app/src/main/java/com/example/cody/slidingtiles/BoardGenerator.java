@@ -1,5 +1,8 @@
 package com.example.cody.slidingtiles;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -122,24 +125,75 @@ class BoardGenerator {
             }
 
         }
+        tileMatrix[4][4] = -1; //Set the empty tile.
         return tileMatrix;
     }
 
     // Returns a 5x5 matrix that represents a Number Mode Board
-    // The board is in solved order, with 1 in the top left and the blank tile in the bottom right.
+    // The board is generated in a random order that is solvable
     int [][] generateNumberModeBoard() {
-        int [][] tileMatrix = new int [5][5];
-        int count = 1;
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                tileMatrix[i][j] = count;
-                count++;
+        int [][] tileMatrix = new int[5][5];
+        List<Integer> list = new ArrayList<>();
+        int index = 0;
+        int grabi = 0;
+        int grabj = 0;
+
+        //add valid numbers to list
+        list.add(-1);
+        for(int i = 1; i < 25; ++i){
+            list.add(i);
+        }
+
+        //shuffle until board is solvable
+        do {
+            Collections.shuffle(list);
+        }while(isSolvable(list) == 0);
+
+        //XXX Have to alter rest of code in order to make blank more random
+        //transfer valid board to actual tileMatrix
+        for(int i = 0; i < 5; ++i){
+            for(int j = 0; j < 5; ++j){
+                if(list.get(index) == -1){
+                    grabi = i;
+                    grabj = j;
+                }
+                tileMatrix[i][j] = list.get(index);
+                ++index;
             }
         }
-        tileMatrix[4][4] = -1; //Set bottom left to empty tile
+
+        //swap blank with bottom right in order to allow integration with rest of code
+        tileMatrix[grabi][grabj] = tileMatrix[4][4];
+        tileMatrix[4][4] = -1;
+
         return tileMatrix;
     }
 
+    //Returns 1 if the board is solvable, otherwise it returns 0
+    //Counts the number of inversion to determine solvability.
+    private int isSolvable(List<Integer> list){
+        int size = 25;
+        int count;
+        int sum = 0;
+
+        for(int i = 0; i < size - 1; ++i){
+            if(list.get(i) != 0){
+                count = 0;
+                for (int j = i + 1; j < size; ++j){
+                    if ((list.get(i) > list.get(j)) && (list.get(j) != 0)){
+                        ++count;
+                    }
+                }
+                sum += count;
+            }
+        }
+        if ((sum % 2) == 0){
+            return 1;
+        }
+        return 0;
+    }
+
+    //
     void shuffleBoard(int tileMatrix[][]){
         Random shuffler = new Random();
         shuffler.setSeed(System.currentTimeMillis());
