@@ -1,16 +1,24 @@
 package com.example.cody.slidingtiles;
 
+import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.ViewGroup.LayoutParams;
+
 
 public class NumberMode extends AppCompatActivity {
+
 
     //Board Resources
     int tileMatrix[][] = new int [5][5];
@@ -20,7 +28,7 @@ public class NumberMode extends AppCompatActivity {
     int emptyTileColIndex;
 
     // Timer variables
-    private Button startButton;
+    //private Button startButton;
     private Button pauseButton;
     private TextView timerValue;
     private long startTime = 0L;
@@ -29,6 +37,10 @@ public class NumberMode extends AppCompatActivity {
     long timeSwapBuff = 0L;
     long updatedTime = 0L;
 
+    //Popup window
+    private Context mContext;
+    private PopupWindow mPopupWindow;
+    private ConstraintLayout mRelativeLayout;
 
     //UI Elements
     Button emptyTileButton;
@@ -42,21 +54,50 @@ public class NumberMode extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_number_mode);
+
+        mContext = getApplicationContext();
+        mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
         // Timer implementation
         timerValue = (TextView) findViewById(R.id.timerValue);
-        startButton = (Button) findViewById(R.id.startButton);
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread, 0);
+        /* startButton = (Button) findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                startTime = SystemClock.uptimeMillis();
-                customHandler.postDelayed(updateTimerThread, 0);
+
             }
-        });
+        }); */
         pauseButton = (Button) findViewById(R.id.pauseButton);
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 timeSwapBuff += timeInMilliseconds;
                 customHandler.removeCallbacks(updateTimerThread);
+
+                //popup
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+                View customView = inflater.inflate(R.layout.popup,null);
+                mPopupWindow = new PopupWindow(
+                        customView,
+                        LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT
+                );
+//                if(Build.VERSION.SDK_INT>=21){
+//                    mPopupWindow.setElevation(5.0f);
+//                }
+                Button resumeButton = (Button) customView.findViewById(R.id.resume);
+                Button closeButton = (Button) customView.findViewById(R.id.exit);
+                Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mPopupWindow.dismiss();
+                    }
+                });
+                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+
+
             }
         });
 
@@ -69,7 +110,7 @@ public class NumberMode extends AppCompatActivity {
     }
 
     // Timer code
-    private Runnable updateTimerThread = new Runnable() {
+    public Runnable updateTimerThread = new Runnable() {
         public void run() {
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
             updatedTime = timeSwapBuff + timeInMilliseconds;

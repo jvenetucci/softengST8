@@ -1,6 +1,8 @@
 package com.example.cody.slidingtiles;
 
 
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
