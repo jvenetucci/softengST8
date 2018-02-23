@@ -1,12 +1,21 @@
 package com.example.cody.slidingtiles;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.PopupWindow;
@@ -15,6 +24,8 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.ViewGroup.LayoutParams;
+
+import java.util.Vector;
 
 
 public class NumberMode extends AppCompatActivity {
@@ -40,7 +51,8 @@ public class NumberMode extends AppCompatActivity {
     //Popup window
     private Context mContext;
     private PopupWindow mPopupWindow;
-    private ConstraintLayout mRelativeLayout;
+    private ConstraintLayout mRelativeLayout,back_dim_layout;
+
 
     //UI Elements
     Button emptyTileButton;
@@ -54,6 +66,7 @@ public class NumberMode extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_number_mode);
+        //back_dim_layout = (ConstraintLayout) findViewById(R.id.bac_dim_layout);
 
         mContext = getApplicationContext();
         mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
@@ -74,6 +87,7 @@ public class NumberMode extends AppCompatActivity {
                 timeSwapBuff += timeInMilliseconds;
                 customHandler.removeCallbacks(updateTimerThread);
 
+
                 //popup
                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
                 View customView = inflater.inflate(R.layout.popup,null);
@@ -82,9 +96,9 @@ public class NumberMode extends AppCompatActivity {
                         LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT
                 );
-//                if(Build.VERSION.SDK_INT>=21){
-//                    mPopupWindow.setElevation(5.0f);
-//                }
+//
+//                ColorDrawable dw = new ColorDrawable(0xFFFFFFF);
+//                mPopupWindow.setBackgroundDrawable(dw);
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
                 Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
@@ -92,6 +106,14 @@ public class NumberMode extends AppCompatActivity {
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        finish();
+                        System.exit(0);
+                    }
+                });
+                resumeButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        startTime = SystemClock.uptimeMillis();
+                        customHandler.postDelayed(updateTimerThread, 0);
                         mPopupWindow.dismiss();
                     }
                 });
