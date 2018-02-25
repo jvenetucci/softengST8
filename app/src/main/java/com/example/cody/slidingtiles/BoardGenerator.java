@@ -162,9 +162,10 @@ class BoardGenerator {
             }
         }
 
-        //swap blank with bottom right in order to allow integration with rest of code
-        tileMatrix[grabi][grabj] = tileMatrix[4][4];
-        tileMatrix[4][4] = -1;
+        //Can remove the code below. Empty tile no longer needs to be the bottom right.
+//        //swap blank with bottom right in order to allow integration with rest of code
+//        tileMatrix[grabi][grabj] = tileMatrix[4][4];
+//        tileMatrix[4][4] = -1;
 
         return tileMatrix;
     }
