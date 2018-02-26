@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class NumberFragment extends Fragment{
     private Button btnSolo;
@@ -36,7 +35,7 @@ public class NumberFragment extends Fragment{
         btnComp.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(),NumberMode.class);
+                Intent intent = new Intent(getActivity(),NumberModeAI.class);
                 startActivity(intent);
             }
         });
