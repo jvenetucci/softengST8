@@ -40,6 +40,13 @@ public class BluetoothConnectionService {
 
     private ConnectedThread mConnectedThread;
 
+    /* DECLARE THE CONNECTION STATE */
+    private static final int DISCONNECTED = 0;
+    private static final int CONNECTED = 1;
+    private int mState = DISCONNECTED;
+
+
+
     public BluetoothConnectionService(Context context) {
         mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -242,6 +249,7 @@ public class BluetoothConnectionService {
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+            mState = CONNECTED;
         }
 
         public void run(){
@@ -300,7 +308,7 @@ public class BluetoothConnectionService {
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
      */
-    public void write(byte[] out) {
+    public synchronized void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
 
@@ -310,6 +318,23 @@ public class BluetoothConnectionService {
         mConnectedThread.write(out);
     }
 
+    public boolean getState(){
+        if(mState == CONNECTED){
+            return true;
+        }
+        return false;
+    }
+
+    //close the connection if we are done.
+    public void closeConnection(){
+        Log.d(TAG, "closing connection");
+        try {
+            mConnectedThread.cancel();
+            mState = DISCONNECTED;
+        }catch (Exception e){
+            Log.d(TAG, "FAILED closing connection");
+        }
+    }
 }
 
 

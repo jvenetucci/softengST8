@@ -308,22 +308,51 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
 
             mBTDevice = mBTDevices.get(i);
             //mBluetoothConnection = new BluetoothConnectionService(BluetoothActivity.this);
+            //selected a device to connect. so why not?
+            startConnection();
         }
     }
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: called.");
         super.onDestroy();
-        unregisterReceiver(mBroadcastReceiver1);
-        unregisterReceiver(mBroadcastReceiver2);
-        unregisterReceiver(mBroadcastReceiver3);
-        unregisterReceiver(mBroadcastReceiver4);
+        try {
+            unregisterReceiver(mBroadcastReceiver1);
+        }catch (Exception e){
+            Log.d(TAG, "onDestroy: no receiver1.");
+        }
+        try {
+            unregisterReceiver(mBroadcastReceiver2);
+        }catch (Exception e){
+            Log.d(TAG, "onDestroy: no receiver2.");
+        }
+        try {
+            unregisterReceiver(mBroadcastReceiver3);
+        }catch (Exception e){
+            Log.d(TAG, "onDestroy: no receiver3.");
+        }
+        try {
+            unregisterReceiver(mBroadcastReceiver4);
+        }catch (Exception e){
+            Log.d(TAG, "onDestroy: no receiver4.");
+        }
+        try {
+            ((BaseApp) this.getApplicationContext()).myBtConnection.closeConnection();
+        }catch (Exception e){
+            Log.d(TAG, "onDestroy: fail closing connection.");
+        }
         //mBluetoothAdapter.cancelDiscovery();
     }
 
-    public void newActivity(View view){
-        Intent intent = new Intent(this, MathMode2Player.class);
-        startActivity(intent);
+    public void newActivity(View view) {
+        boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
+        if (connectStatus) {
+            Log.d(TAG, "new activity: connected");
+            Intent intent = new Intent(this, MathMode2Player.class);
+            startActivity(intent);
+        } else {
+            Log.d(TAG, "new activity: NOT connected");
+        }
     }
 
 }

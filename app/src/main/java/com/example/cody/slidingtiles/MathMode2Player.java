@@ -64,13 +64,14 @@ public class MathMode2Player extends AppCompatActivity {
     public StringBuilder messages;
     TextView incomingMessages;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
 
         //input stream
-        incomingMessages = new TextView(this);
+        //incomingMessages = new TextView(this);
         messages = new StringBuilder();
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
@@ -371,11 +372,12 @@ public class MathMode2Player extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             //Log.d(TAG, "reading in.");
             String text = intent.getStringExtra("theMessage");
-            incomingMessages.setTextSize(20);
-            incomingMessages.setBackgroundColor(Color.GRAY);
-            incomingMessages.setTextColor(Color.MAGENTA);
-            incomingMessages.setText(text);
-            submissionHistoryWindow.addView(incomingMessages, 0);
+            TextView submission = new TextView(context);
+            submission.setTextSize(20);
+            submission.setBackgroundColor(Color.GRAY);
+            submission.setTextColor(Color.MAGENTA);
+            submission.setText(text);
+            submissionHistoryWindow.addView(submission, 0);
             equationHandler.addToSolutionBlackList(text);
 
         }
