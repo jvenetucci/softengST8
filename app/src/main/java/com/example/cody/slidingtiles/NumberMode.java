@@ -1,7 +1,9 @@
 package com.example.cody.slidingtiles;
 
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -64,8 +66,10 @@ public class NumberMode extends AppCompatActivity {
         setContentView(R.layout.activity_number_mode);
         //back_dim_layout = (ConstraintLayout) findViewById(R.id.bac_dim_layout);
 
+        //Popup
         mContext = getApplicationContext();
         mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
+
         // Timer implementation
         timerValue = (TextView) findViewById(R.id.timerValue);
         startTime = SystemClock.uptimeMillis();
@@ -77,7 +81,6 @@ public class NumberMode extends AppCompatActivity {
             }
         }); */
         pauseButton = (Button) findViewById(R.id.pauseButton);
-
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 timeSwapBuff += timeInMilliseconds;
@@ -90,11 +93,17 @@ public class NumberMode extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(
                         customView,
                         LayoutParams.WRAP_CONTENT,
-                        LayoutParams.WRAP_CONTENT
+                        LayoutParams.WRAP_CONTENT,
+                        true
                 );
-//
-//                ColorDrawable dw = new ColorDrawable(0xFFFFFFF);
-//                mPopupWindow.setBackgroundDrawable(dw);
+
+//                final Dialog dialog = new Dialog(NumberMode.this);
+//                dialog.requestWindowFeature(mPopupWindow.F);
+//               dialog.setContentView();
+//                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//                dialog.setCanceledOnTouchOutside(false);
+//                dialog.show();
+                mPopupWindow.setOutsideTouchable(false);
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
                 Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
@@ -113,6 +122,7 @@ public class NumberMode extends AppCompatActivity {
                         mPopupWindow.dismiss();
                     }
                 });
+                //customView.getWindowToken();
                 mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
 
 

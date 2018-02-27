@@ -1,14 +1,19 @@
 package com.example.cody.slidingtiles;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -30,7 +35,7 @@ public class MathMode extends AppCompatActivity {
     ViewGroup submissionHistoryWindow;
 
     // Timer variables
-    private Button startButton;
+    //private Button startButton;
     private Button pauseButton;
     private TextView timerValue;
     private long startTime = 0L;
@@ -38,6 +43,11 @@ public class MathMode extends AppCompatActivity {
     long timeInMilliseconds = 0L;
     long timeSwapBuff = 0L;
     long updatedTime = 0L;
+
+    //Popup window
+    private Context mContext;
+    private PopupWindow mPopupWindow;
+    private ConstraintLayout mRelativeLayout;
 
     //Helper Classes
     MathSolutionHandler equationHandler = new MathSolutionHandler();
@@ -49,21 +59,57 @@ public class MathMode extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
 
+        //Popup
+        mContext = getApplicationContext();
+        mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
+
+
         // Timer implementation
         timerValue = (TextView) findViewById(R.id.timerValue);
-        startButton = (Button) findViewById(R.id.startButton);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                startTime = SystemClock.uptimeMillis();
-                customHandler.postDelayed(updateTimerThread, 0);
-            }
-        });
-        pauseButton = (Button) findViewById(R.id.pauseButton);
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread, 0);
 
+        pauseButton = (Button) findViewById(R.id.pauseButton);
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 timeSwapBuff += timeInMilliseconds;
                 customHandler.removeCallbacks(updateTimerThread);
+
+
+                //popup
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+                View customView = inflater.inflate(R.layout.popup,null);
+                mPopupWindow = new PopupWindow(
+                        customView,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
+                );
+                //mPopupWindow.setFocusable(true);
+                //mPopupWindow.update();
+                //mPopupWindow.setOutsideTouchable(false);
+                Button resumeButton = (Button) customView.findViewById(R.id.resume);
+                Button closeButton = (Button) customView.findViewById(R.id.exit);
+                Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                        System.exit(0);
+                    }
+                });
+                resumeButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        startTime = SystemClock.uptimeMillis();
+                        customHandler.postDelayed(updateTimerThread, 0);
+                        mPopupWindow.dismiss();
+                    }
+                });
+                //customView.getWindowToken();
+                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+
+
             }
         });
 

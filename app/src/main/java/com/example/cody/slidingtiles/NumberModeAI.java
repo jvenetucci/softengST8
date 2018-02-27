@@ -85,11 +85,13 @@ public class NumberModeAI extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(
                         customView,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
                 );
 //
 //                ColorDrawable dw = new ColorDrawable(0xFFFFFFF);
 //                mPopupWindow.setBackgroundDrawable(dw);
+                mPopupWindow.setOutsideTouchable(false);
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
                 Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
