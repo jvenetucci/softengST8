@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.PopupWindow;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.ViewGroup.LayoutParams;
+
+import static junit.framework.Assert.assertTrue;
 
 
 public class NumberMode extends AppCompatActivity {
@@ -86,17 +89,14 @@ public class NumberMode extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(
                         customView,
                         LayoutParams.WRAP_CONTENT,
-                        LayoutParams.WRAP_CONTENT,
-                        true
+                        LayoutParams.WRAP_CONTENT
                 );
 
-//                final Dialog dialog = new Dialog(NumberMode.this);
-//                dialog.requestWindowFeature(mPopupWindow.F);
-//               dialog.setContentView();
-//                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-//                dialog.setCanceledOnTouchOutside(false);
-//                dialog.show();
+                mPopupWindow.setTouchable(true);
+                mPopupWindow.setFocusable(true);
                 mPopupWindow.setOutsideTouchable(false);
+//                mPopupWindow.isOutsideTouchable();
+
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
                 Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
@@ -106,6 +106,7 @@ public class NumberMode extends AppCompatActivity {
                     public void onClick(View view) {
                         finish();
                         System.exit(0);
+
                     }
                 });
                 resumeButton.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +114,7 @@ public class NumberMode extends AppCompatActivity {
                         startTime = SystemClock.uptimeMillis();
                         customHandler.postDelayed(updateTimerThread, 0);
                         mPopupWindow.dismiss();
+
                     }
                 });
                 //customView.getWindowToken();
