@@ -6,14 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/rl"
     tools:context="com.example.cody.slidingtiles.NumberMode">
-    <!--<android.support.constraint.ConstraintLayout-->
-        <!--android:id="@+id/bac_dim_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="#C0000000"-->
-        <!--android:visibility="gone">-->
 
-    <!--</android.support.constraint.ConstraintLayout>-->
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -43,16 +36,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginLeft="16dp" />
 
-        <!--<Button-->
-            <!--android:id="@+id/startButton"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:text="@string/startButtonLabel"-->
-            <!--app:layout_constraintBaseline_toBaselineOf="@+id/timerValue"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintStart_toEndOf="@+id/timerValue"-->
-            <!--android:layout_marginRight="8dp" />-->
+
 
         <Button
             android:id="@+id/pauseButton"

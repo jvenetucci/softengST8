@@ -1,16 +1,13 @@
 package com.example.cody.slidingtiles;
 
 
-import android.app.Dialog;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.PopupWindow;
@@ -19,8 +16,6 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.ViewGroup.LayoutParams;
-
-import static junit.framework.Assert.assertTrue;
 
 
 public class NumberMode extends AppCompatActivity {
@@ -45,7 +40,7 @@ public class NumberMode extends AppCompatActivity {
     //Popup window
     private Context mContext;
     private PopupWindow mPopupWindow;
-    private ConstraintLayout mRelativeLayout,back_dim_layout;
+    private ConstraintLayout mRelativeLayout;
 
 
     //UI Elements
@@ -56,12 +51,12 @@ public class NumberMode extends AppCompatActivity {
     BoardGenerator boardGen = new BoardGenerator();
 
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        timeSwapBuff += timeInMilliseconds;
-        customHandler.removeCallbacks(updateTimerThread);
-    }
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        timeSwapBuff += timeInMilliseconds;
+//        customHandler.removeCallbacks(updateTimerThread);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +72,7 @@ public class NumberMode extends AppCompatActivity {
         timerValue = (TextView) findViewById(R.id.timerValue);
         startTime = SystemClock.uptimeMillis();
         customHandler.postDelayed(updateTimerThread, 0);
-        /* startButton = (Button) findViewById(R.id.startButton);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
 
-            }
-        }); */
         pauseButton = (Button) findViewById(R.id.pauseButton);
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -102,7 +92,7 @@ public class NumberMode extends AppCompatActivity {
                 mPopupWindow.setTouchable(true);
                 mPopupWindow.setFocusable(true);
                 mPopupWindow.setOutsideTouchable(false);
-//                mPopupWindow.isOutsideTouchable();
+//
 
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
@@ -140,7 +130,7 @@ public class NumberMode extends AppCompatActivity {
     }
 
     // Timer code
-    public Runnable updateTimerThread = new Runnable() {
+    private Runnable updateTimerThread = new Runnable() {
         public void run() {
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
             updatedTime = timeSwapBuff + timeInMilliseconds;
@@ -149,8 +139,8 @@ public class NumberMode extends AppCompatActivity {
             secs = secs % 60;
             int milliseconds = (int) (updatedTime % 1000);
             timerValue.setText("" + mins + ":"
-                            + String.format("%02d", secs) + ":"
-                            + String.format("%03d", milliseconds));
+                    + String.format("%02d", secs) + ":"
+                    + String.format("%03d", milliseconds));
             customHandler.postDelayed(this, 0);
         }
     };
