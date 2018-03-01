@@ -1,11 +1,16 @@
 package com.example.cody.slidingtiles;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,7 +23,9 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 
-public class MathMode extends AppCompatActivity {
+import java.nio.charset.Charset;
+
+public class MathMode2Player extends AppCompatActivity {
 
     //Board Resources
     int tileMatrix[][] = new int [5][5];
@@ -53,11 +60,20 @@ public class MathMode extends AppCompatActivity {
     MathSolutionHandler equationHandler = new MathSolutionHandler();
     BoardGenerator boardGen = new BoardGenerator();
 
+    //bluetooth communication
+    public StringBuilder messages;
+    TextView incomingMessages;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
+
+        //input stream
+        //incomingMessages = new TextView(this);
+        messages = new StringBuilder();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
         //Popup
         mContext = getApplicationContext();
@@ -82,12 +98,12 @@ public class MathMode extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(
                         customView,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
                 );
-                mPopupWindow.setTouchable(true);
-                mPopupWindow.setFocusable(true);
-                mPopupWindow.setOutsideTouchable(false);
-
+                //mPopupWindow.setFocusable(true);
+                //mPopupWindow.update();
+                //mPopupWindow.setOutsideTouchable(false);
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
                 Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
@@ -126,7 +142,7 @@ public class MathMode extends AppCompatActivity {
         btnShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            DemandShuffle(tileMatrix);
+                DemandShuffle(tileMatrix);
             }
         });
 
@@ -223,6 +239,9 @@ public class MathMode extends AppCompatActivity {
                     submission.setTextColor(Color.YELLOW);
                 } else {
                     submission.setTextColor(Color.GREEN);
+//!!!!                    //send to player 2
+                    byte[] bytes = equationHandler.getEquationString().getBytes(Charset.defaultCharset());
+                    writeWrapper(bytes);
                     updateScore(score);
                 }
                 submission.setTextSize(20);
@@ -340,6 +359,29 @@ public class MathMode extends AppCompatActivity {
         TextView playerScore = findViewById(R.id.currentScoreTextView);
         playerScore.setText(String.valueOf(currentScore));
     }
+
+    // wrapper for writing to the output stream
+    public void writeWrapper(byte[] bytes){
+        //Log.d(TAG, "writing out.");
+        ((BaseApp)this.getApplicationContext()).myBtConnection.write(bytes);
+    }
+
+    //get input stream
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Log.d(TAG, "reading in.");
+            String text = intent.getStringExtra("theMessage");
+            TextView submission = new TextView(context);
+            submission.setTextSize(20);
+            submission.setBackgroundColor(Color.GRAY);
+            submission.setTextColor(Color.MAGENTA);
+            submission.setText(text);
+            submissionHistoryWindow.addView(submission, 0);
+            equationHandler.addToSolutionBlackList(text);
+
+        }
+    };
 }
 
 
