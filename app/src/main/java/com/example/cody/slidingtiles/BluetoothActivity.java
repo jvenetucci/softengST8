@@ -363,21 +363,25 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     public void newActivity(View view) {
         BoardGenerator mBoardGenerator = new BoardGenerator();
         int[][] sharedBoard;
-        String sharedBoardAsString;
+        String sharedBoardAsString = mBoardGenerator.boardToString(mBoardGenerator.generateMathModeBoard());
+        Log.d(TAG, "new activity: " +sharedBoardAsString);
+        sharedBoard = mBoardGenerator.mathModeBoardFromString(sharedBoardAsString);
         boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
         if (connectStatus) {
-            Log.d(TAG, "new activity: connected");
+            Log.d(TAG, "new activity: connected " );
             try {
                 String gameStart = "Game Start";
+                gameStart += sharedBoardAsString;
                 byte [] bytes =  gameStart.getBytes(Charset.defaultCharset());
                 ((BaseApp) this.getApplicationContext()).myBtConnection.write(bytes);
             }catch (Exception e){
                 Log.d(TAG, "new activity: fail to send game over input stream");
             }
             Intent intent = new Intent(this, MathMode2Player.class);
+            intent.putExtra("newGame", sharedBoardAsString);
             startActivity(intent);
         } else {
-            Log.d(TAG, "new activity: NOT connected");
+            Log.d(TAG, "new activity: NOT connected " );
         }
     }
 
@@ -389,8 +393,10 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
             String text = intent.getStringExtra("theMessage");
             Log.d(TAG, "reading input stream..  " + text);
 
-            if (text.equals("Game Start")){
+            if (text.contains("Game Start")){
+                String newBoard = text.substring(10);
                 Intent start2Player= new Intent(context, MathMode2Player.class);
+                start2Player.putExtra("newGame",newBoard);
                 startActivity(start2Player);
             }
         }

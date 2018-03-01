@@ -23,10 +23,11 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 public class MathMode2Player extends AppCompatActivity {
-
+    private final String TAG = "MathMode2Player";
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -130,7 +131,19 @@ public class MathMode2Player extends AppCompatActivity {
         });
 
         //Create a 2-D array of the board
-        tileMatrix = boardGen.generateMathModeBoard();
+
+        try {
+            Intent intent = getIntent();
+            String boardString = intent.getStringExtra("newGame");
+            tileMatrix = boardGen.mathModeBoardFromString(boardString);
+        }catch (Exception e){
+            try{
+                tileMatrix = boardGen.generateMathModeBoard();
+            }catch (Exception e1){
+                Log.e(TAG, "error creating default board");
+            }
+            Log.e(TAG, "error creating shared board");
+        }
 //        shuffleBoard(tileMatrix);
 
         //Move the contents of the 2-D array to the UI

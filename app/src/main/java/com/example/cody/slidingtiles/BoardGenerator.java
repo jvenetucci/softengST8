@@ -1,9 +1,15 @@
 package com.example.cody.slidingtiles;
 
+import android.graphics.LightingColorFilter;
+import android.util.Log;
+
+import java.io.StringReader;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 /**
  * A helper class for generating 2d matrix representations of sliding tile boards
@@ -12,6 +18,7 @@ import java.util.Random;
 
 class BoardGenerator {
 
+    private final String TAG = "BoardGenerator";
     // Returns a 5x5 matrix that represents a Math Mode Board
     // The first four rows from the top contain valid equations
     // The last row is just numbers
@@ -213,5 +220,33 @@ class BoardGenerator {
             tileMatrix[sourceRow][sourceCol] = tileMatrix[targetRow][targetCol];
             tileMatrix[targetRow][targetCol] = temp;
         }
+    }
+
+    public String boardToString(int tileMatrix[][]){
+        StringBuilder fullBoard = new StringBuilder();
+        for(int i = 0; i <5; i++){
+            for(int j = 0; j<5; j++) {
+                fullBoard.append(tileMatrix[i][j]);
+                fullBoard.append(",");
+            }
+        }
+
+        return fullBoard.toString();
+    }
+
+
+    public int [][] mathModeBoardFromString(String fullBoard) {
+        Log.d(TAG, "mathModeBoardFromString. Trying to convert " +fullBoard+" to tileMatrix");
+        int [][] tileMatrix = new int[5][5];
+        StringTokenizer tok = new StringTokenizer(fullBoard, ",");
+        String temp;
+        for(int i = 0; i <5; i++){
+            for(int j = 0; j<5; j++) {
+                temp = tok.nextToken();
+                tileMatrix[i][j] =  Integer.valueOf(temp);
+                Log.d(TAG, "mathModeBoardFromString.. " + tileMatrix[i][j]);
+            }
+        }
+        return tileMatrix;
     }
 }
