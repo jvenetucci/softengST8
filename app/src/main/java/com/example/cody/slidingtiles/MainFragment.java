@@ -25,7 +25,7 @@ public class MainFragment extends Fragment {
     private Button btnNum;
     private Button btnMath;
     private Button btnScore;
-    private Button btnBluetooth;
+//    private Button btnBluetooth;
 
     @Nullable
     @Override
@@ -34,7 +34,7 @@ public class MainFragment extends Fragment {
         btnNum = (Button) view.findViewById(R.id.btnNum);
         btnMath = (Button) view.findViewById(R.id.btnMath);
         btnScore = (Button) view.findViewById(R.id.btnScore);
-        btnBluetooth = (Button) view.findViewById(R.id.btnBluetooth);
+//        btnBluetooth = (Button) view.findViewById(R.id.btnBluetooth);
 
         btnNum.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -55,6 +55,7 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        /*
         btnBluetooth.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -62,6 +63,7 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        */
         return view;
     }
 }
