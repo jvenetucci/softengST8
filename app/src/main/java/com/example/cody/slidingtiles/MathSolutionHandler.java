@@ -49,73 +49,147 @@ class MathSolutionHandler {
 
     // Verify if the equation passed in as an array is valid
     // Checks for format, correctness, and if its already been used.
+    // Returns:
+    //  -3 For already used solution
+    //  -2 For incorrect format
+    //  -1 For invalid equation
+    //  Any other number for the value of the equation
     int solveEquation(int[] equation) {
         int score = 0;
+        int equalsIndex;
+        int operator;
 
         // format check
         for (int i = 0; i <5; i++ ){
             if(equation[i] == -1){
                 return -2;
             }
-            if (i % 2 == 0){
-                if (equation[i] > 10){
+            else if (i % 2 == 0){
+                if (equation[i] >= 10){
                     return -2;
                 }
             }
             else{
-                if (equation [i] < 9){
+                if (equation [i] <= 9){
                     return -2;
                 }
             }
         }
 
-        // change to the form Num Sym Num EQ Num
-        if (equation [1] == 10) {
+        //Are there two equals?
+        if (equation[1] == 10 && equation[3] == 10) {
+            return -2;
+        }
+        //Are there no equals?
+        if (equation[1] != 10 && equation[3] != 10) {
+            return -2;
+        }
+
+        if (equation[1] == 10) {
+            equalsIndex = 1;
+            operator = equation[3];
+        } else {
+            equalsIndex = 3;
+            operator = equation[1];
+        }
+
+        // If a operator is addition (11) or multiplication (13) and is reversed
+        // put the equation in the form Num Sym Num EQ Num
+        if ((operator == 11 || operator == 13) && equalsIndex == 1) {
             int temp[]= new int[5];
             for(int i = 0; i <5; i++){
                 temp[i] = equation[4-i];
             }
             System.arraycopy(temp, 0, equation, 0, 5);
+            equalsIndex = 3;
         }
 
+        // Check to see if we already used this equation
         String equaString;
         equaString = getEquationString(equation);
         if(solutionBlackList.contains(equaString)) {
-            return 0;
+            return -3;
         }
 
         // equation check.
-        switch(equation[1]){
-            case 11://add
-                if(equation[4] == equation[0] + equation[2]){
-                    score = equation[4];
-                }
-                break;
-            case 12://subtract
-                if(equation[0] == 0){
-                    score = 0;
-                }else if(equation[4] == equation[0] - equation[2]){
-                    score = equation[4];
-                }
-                break;
-            case 13://multiply
-                if(equation[4] == equation[0] * equation[2]){
-                    score = equation[4];
-                }
-                break;
-            case 14://divide
-                if(equation[0] == 0 || equation[2] == 0 || equation[4] == 0){
-                    return 0;
-                }else if(equation[4] == equation[0] / equation[2]){
-                    score = equation[4];
-                }
-                break;
-            default:
-                break;
+        if (equalsIndex == 1) {
+            score = solveReversedEquation(equation);
+        } else {
+            score = solveNormalEquation(equation);
         }
-        solutionBlackList.add(equaString);
+
+        if (score >= 0) {
+            solutionBlackList.add(equaString);
+        }
         return score;
     }
+
+    private int solveNormalEquation(int[] equation) {
+        switch (equation[1]) {
+            case 11://add
+                if (equation[4] == equation[0] + equation[2]) {
+                    return equation[4];
+                } else {
+                    return -1;
+                }
+            case 12://subtract
+                if (equation[4] == equation[0] - equation[2]) {
+                    return equation[4];
+                } else {
+                    return -1;
+                }
+            case 13://multiply
+                if (equation[4] == equation[0] * equation[2]) {
+                    return equation[4];
+                } else {
+                    return -1;
+                }
+            case 14://divide
+                if (equation[2] == 0 ){ // Never divide by zero!
+                    return -1;
+                } else if (equation[4] == (equation[0] / equation[2])) {
+                    return equation[4];
+                } else {
+                    return -1;
+                }
+            default:
+                return -1;
+        }
+    }
+
+    private int solveReversedEquation(int[] equation) {
+        switch (equation[3]) {
+            case 11://add
+                if (equation[0] == equation[2] + equation[4]) {
+                    return equation[0];
+                } else {
+                    return -1;
+                }
+            case 12://subtract
+                if (equation[0] == equation[2] - equation[4]) {
+                    return equation[0];
+                } else {
+                    return -1;
+                }
+            case 13://multiply
+                if (equation[0] == equation[2] * equation[4]) {
+                    return equation[0];
+                } else {
+                    return -1;
+                }
+            case 14://divide
+                if (equation[4] == 0 ){ // Never divide by zero!
+                    return -1;
+                } else if (equation[0] == (equation[2] / equation[4])) {
+                    return equation[0];
+                } else {
+                    return -1;
+                }
+            default:
+                return -1;
+        }
+}
+
 
     // Resets the handler by clearing the tiles from the collection
     void resetHandler() {

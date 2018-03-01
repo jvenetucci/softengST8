@@ -133,6 +133,14 @@ public class MathSolutionHandlerTest {
     }
 
     @Test
+    public void getEquationNumberArrayReturnsCorrectStringReversed() {
+        MathSolutionHandler solutionHandler = new MathSolutionHandler();
+        int [] equationArray = {5, 10, 2, 11, 3}; // 5 = 2 + 3
+
+        assertEquals(solutionHandler.getEquationString(equationArray), "5 = 2 + 3 ");
+    }
+
+    @Test
     public void solveReturns2WhenEquationEquals2() {
         int equation [] = new int [] {1, 11, 1, 10, 2}; //1 + 1 = 2
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
@@ -153,10 +161,9 @@ public class MathSolutionHandlerTest {
         assertEquals(8,solutionHandler.solveEquation(equation));
     }
 
-    // REVERSE DOES NOT WORK FOR SUBTRACTION
     @Test
     public void solveReversesSubtractionEquation() {
-        int equation [] = new int [] {8, 10, 1, 12, 9}; // 8 = 1 - 9
+        int equation [] = new int [] {8, 10, 9, 12, 1}; // 8 = 1 - 9
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
         assertEquals(8,solutionHandler.solveEquation(equation));
     }
@@ -185,7 +192,7 @@ public class MathSolutionHandlerTest {
     // REVERSE DOES NOT WORK FOR DIVISION
     @Test
     public void solveReversesDivisionEquation() {
-        int equation [] = new int [] {3, 10, 2, 14, 6}; // 3 = 2 / 6
+        int equation [] = new int [] {3, 10, 6, 14, 2}; // 3 = 6 / 2
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
         assertEquals(3,solutionHandler.solveEquation(equation));
     }
@@ -225,34 +232,32 @@ public class MathSolutionHandlerTest {
         assertEquals(-2,solutionHandler.solveEquation(equation));
     }
 
-//    // This should return -2, but returns 0
-//    @Test
-//    public void solveReturnsMinus2WhenEquationMissingEqualsOperator() {
-//        int equation [] = new int [] {1, 12, 1, 12, 0}; // 1 - 1 - 2
-//        MathSolutionHandler solutionHandler = new MathSolutionHandler();
-//        assertEquals(-2,solutionHandler.solveEquation(equation));
-//    }
-
     @Test
-    public void solveReturns0WhenEquationSubtractsFrom0() {
-        int equation [] = new int [] {0, 12, 1, 10, 1}; // 0 - 1 = 1
+    public void solveReturnsMinus2WhenEquationMissingEqualsOperator() {
+        int equation [] = new int [] {1, 12, 1, 12, 0}; // 1 - 1 - 2
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
-        assertEquals(0,solutionHandler.solveEquation(equation));
+        assertEquals(-2,solutionHandler.solveEquation(equation));
     }
 
-    // WE SHOULD RESERVE RETURNING 0 FOR EQUATIONS THAT EQUAL ZERO
+    @Test
+    public void solveReturnsMinus1WhenEquationSubtractsFrom0() {
+        int equation [] = new int [] {0, 12, 1, 10, 1}; // 0 - 1 = 1
+        MathSolutionHandler solutionHandler = new MathSolutionHandler();
+        assertEquals(-1,solutionHandler.solveEquation(equation));
+    }
+
     @Test
     public void solveReturns0WhenAdditionEquationIsWrong() {
         int equation [] = new int [] {2, 11, 6, 10, 5}; // 2 + 6 = 5
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
-        assertEquals(0,solutionHandler.solveEquation(equation));
+        assertEquals(-1,solutionHandler.solveEquation(equation));
     }
 
     @Test
-    public void solveReturns0WhenDividingBy0() {
+    public void solveReturnsMinus1WhenDividingBy0() {
         int equation [] = new int [] {2, 14, 0, 10, 1}; // 2 / 0 = 1
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
-        assertEquals(0,solutionHandler.solveEquation(equation));
+        assertEquals(-1,solutionHandler.solveEquation(equation));
     }
 
 
