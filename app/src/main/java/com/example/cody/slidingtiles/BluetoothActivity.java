@@ -27,18 +27,19 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     private static final String TAG = "BluetoothActivity";
 
     Button btnEnableDisable_Discoverable;
-    Button btnStartConnection;
-    Button btnSend;
+    //Button btnStartConnection;
+    //Button btnSend;
     //BluetoothConnectionService mBluetoothConnection;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mBTDevice;
     public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     public DeviceListAdapter mDeviceListAdapter;
     ListView lvNewDevices;
+    ListView bondedDevices;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
-    // Create a BroadcastReceiver for ACTION_FOUND
+    // Create a BroadcastReceiver for ACTION_STATE_CHANGED
     // For ON/OFF button
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -115,10 +116,21 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
-                mBTDevices.add(device);
-                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress());
-                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
-                lvNewDevices.setAdapter(mDeviceListAdapter);
+                if(!mBTDevices.contains(device)) {
+                    mBTDevices.add(device);
+                }
+                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + " :: " +device.getBondState());
+
+                if(device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(TAG, "onReceive: new device..");
+                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
+                    lvNewDevices.setAdapter(mDeviceListAdapter);
+                }
+                if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    Log.d(TAG, "onReceive: bonded dev");
+                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
+                    bondedDevices.setAdapter(mDeviceListAdapter);
+                }
             }
         }
     };
@@ -139,6 +151,8 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
                     //inside BroadcastReceiver4
                     mBTDevice = mDevice;
+                    refreshViews();
+                    startConnection();
                 }
                 //case2: creating a bone
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -156,10 +170,11 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth);
-        Button btnONOFF = (Button) findViewById(R.id.btnONOFF);
+        //Button btnONOFF = (Button) findViewById(R.id.btnONOFF);
         btnEnableDisable_Discoverable = (Button) findViewById(R.id.btnDiscoverable_on_off);
-        btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
+        //btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
         lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
+        bondedDevices = (ListView) findViewById(R.id.bondedDevices);
         mBTDevices = new ArrayList<>();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -168,7 +183,8 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         registerReceiver(mBroadcastReceiver4, filter);
 
         lvNewDevices.setOnItemClickListener(BluetoothActivity.this);
-
+        bondedDevices.setOnItemClickListener(BluetoothActivity.this);
+/*
         btnONOFF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,6 +192,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                 enableDisableBT();
             }
         });
+*/
 /*
         btnStartConnection.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +244,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     }
 
 
-    //DISCOVER BUTTON
+    //ENABLE_DISCOVERY BUTTON
     public void btnEnableDisable_Discoverable(View view) {
         Log.d(TAG, "btnEnableDisable_Discoverable: Making device discoverable for 300 seconds.");
 
@@ -241,11 +258,11 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     }
 
 
-
+    //DISCOVER BUTTON
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void btnDiscover(View view) {
         Log.d(TAG, "btnDiscover: Looking for unpaired devices.");
-
+        refreshViews();
         if(mBluetoothAdapter.isDiscovering()){
             mBluetoothAdapter.cancelDiscovery();
             Log.d(TAG, "btnDiscover: Canceling discovery.");
@@ -307,18 +324,25 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         //NOTE: Requires API 17+? I think this is JellyBean
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
             Log.d(TAG, "Trying to pair with " + deviceName);
-            mBTDevices.get(i).createBond();
-
+            if(mBTDevices.get(i).getBondState() == BluetoothDevice.BOND_NONE) {
+                mBTDevices.get(i).createBond();
+            }
             mBTDevice = mBTDevices.get(i);
             //mBluetoothConnection = new BluetoothConnectionService(BluetoothActivity.this);
             //selected a device to connect. so why not?
-            startConnection();
+            if(mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                startConnection();
+            }
         }
     }
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: called.");
         super.onDestroy();
+        // Make sure we're not doing discovery anymore
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
         try {
             unregisterReceiver(mBroadcastReceiver1);
         }catch (Exception e){
@@ -402,4 +426,27 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         }
     };
 
+    protected void refreshViews() {
+        try {
+            lvNewDevices.setAdapter(null);
+            bondedDevices.setAdapter(null);
+        } catch (Exception e) {
+            Log.e(TAG, "refreshViews: failed.");
+        }
+        if(mBTDevices.size() >0) {
+            for(BluetoothDevice device: mBTDevices) {
+                if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    Log.d(TAG, "refreshViews: bonded");
+                    mDeviceListAdapter = new DeviceListAdapter(this, R.layout.device_adapter_view, mBTDevices);
+                    bondedDevices.setAdapter(mDeviceListAdapter);
+                }
+                if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(TAG, "refreshViews: not bonded");
+                    mDeviceListAdapter = new DeviceListAdapter(this, R.layout.device_adapter_view, mBTDevices);
+                    lvNewDevices.setAdapter(mDeviceListAdapter);
+                }
+            }
+
+        }
+    }
 }
