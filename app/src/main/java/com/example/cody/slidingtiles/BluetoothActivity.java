@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -174,7 +176,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                 enableDisableBT();
             }
         });
-
+/*
         btnStartConnection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,7 +184,8 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                 startConnection();
             }
         });
-
+*/
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiverSyncOpen, new IntentFilter("incomingMessage"));
     }
     //***remember the connection will fail and app will crash if you haven't paired first
     public void startConnection(){
@@ -337,6 +340,12 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
             Log.d(TAG, "onDestroy: no receiver4.");
         }
         try {
+            unregisterReceiver(mReceiverSyncOpen);
+        }catch (Exception e){
+            Log.d(TAG, "onDestroy: no SyncOpen.");
+        }
+
+        try {
             ((BaseApp) this.getApplicationContext()).myBtConnection.closeConnection();
         }catch (Exception e){
             Log.d(TAG, "onDestroy: fail closing connection.");
@@ -344,15 +353,47 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         //mBluetoothAdapter.cancelDiscovery();
     }
 
+
+    /*
+     * On button press, signal the other device that we are starting a game and send
+     * the initializing board data so that the games start the same.
+     *
+     *
+     */
     public void newActivity(View view) {
+        BoardGenerator mBoardGenerator = new BoardGenerator();
+        int[][] sharedBoard;
+        String sharedBoardAsString;
         boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
         if (connectStatus) {
             Log.d(TAG, "new activity: connected");
+            try {
+                String gameStart = "Game Start";
+                byte [] bytes =  gameStart.getBytes(Charset.defaultCharset());
+                ((BaseApp) this.getApplicationContext()).myBtConnection.write(bytes);
+            }catch (Exception e){
+                Log.d(TAG, "new activity: fail to send game over input stream");
+            }
             Intent intent = new Intent(this, MathMode2Player.class);
             startActivity(intent);
         } else {
             Log.d(TAG, "new activity: NOT connected");
         }
     }
+
+    //get input stream to signal opening the app at the same time
+    BroadcastReceiver mReceiverSyncOpen = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String text = intent.getStringExtra("theMessage");
+            Log.d(TAG, "reading input stream..  " + text);
+
+            if (text.equals("Game Start")){
+                Intent start2Player= new Intent(context, MathMode2Player.class);
+                startActivity(start2Player);
+            }
+        }
+    };
 
 }
