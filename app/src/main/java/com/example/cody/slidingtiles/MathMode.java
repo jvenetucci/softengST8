@@ -3,6 +3,8 @@ package com.example.cody.slidingtiles;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -82,11 +84,17 @@ public class MathMode extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(
                         customView,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
                 );
-                mPopupWindow.setTouchable(true);
-                mPopupWindow.setFocusable(true);
-                mPopupWindow.setOutsideTouchable(false);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+                    mPopupWindow.setTouchable(true);
+                    mPopupWindow.setFocusable(true);
+                    mPopupWindow.setOutsideTouchable(false);
+                    mPopupWindow.update();
+                }
 
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
@@ -107,7 +115,7 @@ public class MathMode extends AppCompatActivity {
                     }
                 });
                 //customView.getWindowToken();
-                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+
 
 
             }

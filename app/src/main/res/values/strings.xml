@@ -20,4 +20,11 @@
     <string name="pauseButtonLabel">Pause</string>
     <string name="startButtonLabel">Play</string>
     <string name="timerVal">0:00:00</string>
+    <string name="editText_main">Enter Name Here</string>
+    <string name="Key_Name">Name</string>
+    <string name="submit">Submit</string>
+    <string name="Player_name">Player Name</string>
+    <string name="Math_mode">Math Mode</string>
+    <string name="Number_mode">Number Mode</string>
+    <string name="welcome">Welcome to Sliding Tiles</string>
 </resources>
