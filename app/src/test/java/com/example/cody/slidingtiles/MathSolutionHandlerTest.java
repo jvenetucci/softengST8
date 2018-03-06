@@ -259,6 +259,4 @@ public class MathSolutionHandlerTest {
         MathSolutionHandler solutionHandler = new MathSolutionHandler();
         assertEquals(-1,solutionHandler.solveEquation(equation));
     }
-
-
 }

@@ -104,6 +104,19 @@ class MathSolutionHandler {
             equalsIndex = 3;
         }
 
+        // If a operator is subtraction (12) or division (14) and the numbers are the same
+        // The equation is the same reversed.
+        if ((operator == 12 || operator == 14)) {
+            if ((equalsIndex == 1) && (equation[2] == equation[4])) {   // NumA = NumB / NumB
+                int temp[]= new int[5];
+                for(int i = 0; i <5; i++){
+                    temp[i] = equation[4-i];
+                }
+                System.arraycopy(temp, 0, equation, 0, 5);
+                equalsIndex = 3;
+            }
+        }
+
         // Check to see if we already used this equation
         String equaString;
         equaString = getEquationString(equation);
