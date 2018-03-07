@@ -35,6 +35,13 @@ public class MathMode2Player extends AppCompatActivity {
     private float ySubmittedTile;
     private float xSubmittedTile;
     private int axisLock;   // 1 = Vertical solution; 2 = Horizontal solution
+
+    // GAME STATE MANAGEMENT
+    int numberOfGames;
+    int currentGameNumber;
+    int playerWins = 0;
+    int opponentWins = 0;
+    int opponentScore = 0;
     int currentScore = 0;
 
     //UI Elements
@@ -86,9 +93,14 @@ public class MathMode2Player extends AppCompatActivity {
         startTime = SystemClock.uptimeMillis();
         customHandler.postDelayed(updateTimerThread, 0);
 
+
         pauseButton = (Button) findViewById(R.id.pauseButton);
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                byte[] bytes = "Pause".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                pausefunction();
+                /*
                 timeSwapBuff += timeInMilliseconds;
                 customHandler.removeCallbacks(updateTimerThread);
 
@@ -125,7 +137,7 @@ public class MathMode2Player extends AppCompatActivity {
                 });
                 //customView.getWindowToken();
                 mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
-
+*/
 
             }
         });
@@ -379,20 +391,81 @@ public class MathMode2Player extends AppCompatActivity {
         ((BaseApp)this.getApplicationContext()).myBtConnection.write(bytes);
     }
 
+    //Pause function.
+    public void pausefunction(){
+        timeSwapBuff += timeInMilliseconds;
+        customHandler.removeCallbacks(updateTimerThread);
+
+
+        //popup
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View customView = inflater.inflate(R.layout.popup,null);
+        mPopupWindow = new PopupWindow(
+                customView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+        //mPopupWindow.setFocusable(true);
+        //mPopupWindow.update();
+        //mPopupWindow.setOutsideTouchable(false);
+        Button resumeButton = (Button) customView.findViewById(R.id.resume);
+        Button closeButton = (Button) customView.findViewById(R.id.exit);
+        Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                byte[] bytes = "Exit".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                finish();
+                System.exit(0);
+            }
+        });
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                byte[] bytes = "Resume".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                startTime = SystemClock.uptimeMillis();
+                customHandler.postDelayed(updateTimerThread, 0);
+                mPopupWindow.dismiss();
+            }
+        });
+        //customView.getWindowToken();
+        mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+    }
+    //resume function
+    public void resumeFunction() {
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread, 0);
+        mPopupWindow.dismiss();
+    }
+    //resume function
+    public void exitFunction() {
+        finish();
+        System.exit(0);
+    }
     //get input stream
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Log.d(TAG, "reading in.");
             String text = intent.getStringExtra("theMessage");
-            TextView submission = new TextView(context);
-            submission.setTextSize(20);
-            submission.setBackgroundColor(Color.GRAY);
-            submission.setTextColor(Color.MAGENTA);
-            submission.setText(text);
-            submissionHistoryWindow.addView(submission, 0);
-            equationHandler.addToSolutionBlackList(text);
-
+            if(text.contains("Pause")){
+                pausefunction();
+            }else if(text.contains("Resume")){
+                resumeFunction();
+            }else if(text.contains("Exit")){
+                exitFunction();
+            }else{
+                TextView submission = new TextView(context);
+                submission.setTextSize(20);
+                submission.setBackgroundColor(Color.GRAY);
+                submission.setTextColor(Color.MAGENTA);
+                submission.setText(text);
+                submissionHistoryWindow.addView(submission, 0);
+                equationHandler.addToSolutionBlackList(text);
+            }
         }
     };
 }

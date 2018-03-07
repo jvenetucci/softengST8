@@ -26,4 +26,14 @@
     <string name="discover">Discover</string>
     <string name="paired_devices">Paired Devices</string>
     <string name="unpaired_devices">Unpaired Devices</string>
+    <string name="number_of_rounds">Number of Rounds</string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="cuttthroat">Cuttthroat</string>
+    <string name="basic">Basic</string>
+    <string-array name="roundsToPlay">
+        <item> 1 </item>
+        <item> 3 </item>
+        <item> 5 </item>
+        <item> 7 </item>
+    </string-array>
 </resources>

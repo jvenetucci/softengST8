@@ -15,27 +15,42 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.ToggleButton;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
 
 
-public class BluetoothActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class BluetoothActivity extends AppCompatActivity{
     private static final String TAG = "BluetoothActivity";
 
+    ToggleButton toggleButton;
+    Spinner spinner;
     Button btnEnableDisable_Discoverable;
     //Button btnStartConnection;
     //Button btnSend;
     //BluetoothConnectionService mBluetoothConnection;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mBTDevice;
-    public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
-    public DeviceListAdapter mDeviceListAdapter;
+    public ArrayList<BluetoothDevice> mNewBTDevices = new ArrayList<>();
+    public ArrayList<BluetoothDevice> mBondedBTDevices = new ArrayList<>();
+    public DeviceListAdapter mNewDeviceListAdapter;
+    public DeviceListAdapter mBondedListAdapter;
+    private ArrayAdapter lvAdapter;
+    private ArrayAdapter BondedAdapter;
     ListView lvNewDevices;
     ListView bondedDevices;
+    private int numberOfRounds;
+    private int gameMode;
+    private static final int BASIC_MODE = 1;
+    private static final int CUTTTHROAT_MODE = 2;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -116,20 +131,27 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
-                if(!mBTDevices.contains(device)) {
+/*                if(!mBTDevices.contains(device)) {
                     mBTDevices.add(device);
                 }
+ */
                 Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + " :: " +device.getBondState());
 
                 if(device.getBondState() == BluetoothDevice.BOND_NONE) {
                     Log.d(TAG, "onReceive: new device..");
-                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
-                    lvNewDevices.setAdapter(mDeviceListAdapter);
+                    if(!mNewBTDevices.contains(device)) {
+                        mNewBTDevices.add(device);
+                    }
+                    mNewDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mNewBTDevices);
+                    lvNewDevices.setAdapter(mNewDeviceListAdapter);
                 }
                 if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "onReceive: bonded dev");
-                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
-                    bondedDevices.setAdapter(mDeviceListAdapter);
+                    if(!mBondedBTDevices.contains(device)) {
+                        mBondedBTDevices.add(device);
+                    }
+                    mBondedListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBondedBTDevices);
+                    bondedDevices.setAdapter(mBondedListAdapter);
                 }
             }
         }
@@ -151,7 +173,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
                     //inside BroadcastReceiver4
                     mBTDevice = mDevice;
-                    refreshViews();
+                    //refreshViews();
                     startConnection();
                 }
                 //case2: creating a bone
@@ -175,15 +197,123 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         //btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
         lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
         bondedDevices = (ListView) findViewById(R.id.bondedDevices);
-        mBTDevices = new ArrayList<>();
+        mBondedBTDevices = new ArrayList<>();
+        mNewBTDevices = new ArrayList<>();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         //Broadcasts when bond state changes (ie:pairing)
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBroadcastReceiver4, filter);
 
-        lvNewDevices.setOnItemClickListener(BluetoothActivity.this);
-        bondedDevices.setOnItemClickListener(BluetoothActivity.this);
+        //Spinner for the number of rounds to play
+        spinner = (Spinner) findViewById(R.id.spinner);
+        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.roundsToPlay, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String roundSelection = (String) spinnerAdapter.getItem(position);
+                Log.d(TAG, "onDropClick: You Clicked on = " + roundSelection);
+                numberOfRounds = Integer.valueOf(roundSelection);
+
+                Log.d(TAG, "onDropClick: value" + numberOfRounds);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // default game mode
+        gameMode = BASIC_MODE;
+        //Toggle button for the different game modes: CuttThroat or Basic
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled: Basic Mode
+                    Log.d(TAG, "Toggle : value" + gameMode);
+                    gameMode = BASIC_MODE;
+                } else {
+                    // The toggle is disabled: CuttThroat Mode
+                    Log.d(TAG, "Toggle : value" + gameMode);
+                    gameMode = CUTTTHROAT_MODE;
+                }
+            }
+        });
+
+        // listview adapters for bonded and new devices
+        lvAdapter = new ArrayAdapter<BluetoothDevice>(this, R.layout.device_adapter_view,mNewBTDevices);
+        lvNewDevices.setAdapter(lvAdapter);
+        lvNewDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //first cancel discovery because its very memory intensive.
+                mBluetoothAdapter.cancelDiscovery();
+
+                Log.d(TAG, "onItemClick: You Clicked on a device.");
+                String deviceName = mNewBTDevices.get(position).getName();
+                String deviceAddress = mNewBTDevices.get(position).getAddress();
+
+                Log.d(TAG, "onItemClick: deviceName = " + deviceName);
+                Log.d(TAG, "onItemClick: deviceAddress = " + deviceAddress);
+
+                //create the bond.
+                //NOTE: Requires API 17+? I think this is JellyBean
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
+                    Log.d(TAG, "Trying to pair with " + deviceName);
+                    if(mNewBTDevices.get(position).getBondState() == BluetoothDevice.BOND_NONE) {
+                        mNewBTDevices.get(position).createBond();
+                    }
+                    mBTDevice = mNewBTDevices.get(position);
+
+                    //remove from unpaired. add to paired
+                    mNewBTDevices.remove(mBTDevice);
+                    mBondedBTDevices.add(mBTDevice);
+                    mBondedListAdapter = new DeviceListAdapter(BluetoothActivity.this, R.layout.device_adapter_view, mBondedBTDevices);
+                    bondedDevices.setAdapter(mBondedListAdapter);
+                    //mBluetoothConnection = new BluetoothConnectionService(BluetoothActivity.this);
+                    //selected a device to connect. so why not?
+                    if(mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        startConnection();
+                    }
+                }
+            }
+        });
+
+        BondedAdapter = new ArrayAdapter<BluetoothDevice>(this, R.layout.device_adapter_view,mBondedBTDevices);
+        bondedDevices.setAdapter(BondedAdapter);
+        bondedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //first cancel discovery because its very memory intensive.
+                mBluetoothAdapter.cancelDiscovery();
+
+                Log.d(TAG, "onItemClick: You Clicked on a device.");
+                String deviceName = mBondedBTDevices.get(position).getName();
+                String deviceAddress = mBondedBTDevices.get(position).getAddress();
+
+                Log.d(TAG, "onItemClick: deviceName = " + deviceName);
+                Log.d(TAG, "onItemClick: deviceAddress = " + deviceAddress);
+
+                //create the bond.
+                //NOTE: Requires API 17+? I think this is JellyBean
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
+                    Log.d(TAG, "Trying to pair with " + deviceName);
+                    if(mBondedBTDevices.get(position).getBondState() == BluetoothDevice.BOND_NONE) {
+                        mBondedBTDevices.get(position).createBond();
+                    }
+                    mBTDevice = mBondedBTDevices.get(position);
+                    //mBluetoothConnection = new BluetoothConnectionService(BluetoothActivity.this);
+                    //selected a device to connect. so why not?
+                    if(mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        startConnection();
+                    }
+                }
+            }
+        });
 /*
         btnONOFF.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,7 +392,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void btnDiscover(View view) {
         Log.d(TAG, "btnDiscover: Looking for unpaired devices.");
-        refreshViews();
+       // refreshViews();
         if(mBluetoothAdapter.isDiscovering()){
             mBluetoothAdapter.cancelDiscovery();
             Log.d(TAG, "btnDiscover: Canceling discovery.");
@@ -307,7 +437,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         }
     }
 
-
+/*
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //first cancel discovery because its very memory intensive.
@@ -335,6 +465,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
             }
         }
     }
+    */
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: called.");
@@ -425,13 +556,20 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
             }
         }
     };
-
+/*
     protected void refreshViews() {
         try {
             lvNewDevices.setAdapter(null);
             bondedDevices.setAdapter(null);
         } catch (Exception e) {
             Log.e(TAG, "refreshViews: failed.");
+        }
+        if(mBondedBTDevices.size() >0){
+            for(BluetoothDevice device: mBondedBTDevices) {
+                Log.d(TAG, "refreshViews: bonded");
+                mBondedListAdapter = new DeviceListAdapter(this, R.layout.device_adapter_view, mBondedBTDevices);
+                bondedDevices.setAdapter(mBondedListAdapter);
+            }
         }
         if(mBTDevices.size() >0) {
             for(BluetoothDevice device: mBTDevices) {
@@ -449,4 +587,5 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
 
         }
     }
+  */
 }
