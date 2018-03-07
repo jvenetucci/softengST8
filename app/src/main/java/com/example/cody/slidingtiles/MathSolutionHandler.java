@@ -295,4 +295,9 @@ class MathSolutionHandler {
     int getCountOfSubmittedTiles() {
         return tiles.size();
     }
+
+    //Player2's solutions
+    public void addToSolutionBlackList(String string){
+        solutionBlackList.add(string);
+    }
 }

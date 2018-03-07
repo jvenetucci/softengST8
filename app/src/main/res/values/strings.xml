@@ -11,6 +11,7 @@
     <string name="home">Home</string>
     <string name="back">Back</string>
     <string name="main">Main Menu</string>
+    <string name="bluetoothButtonLabel">Bluetooth</string>
     <string name="score">Score:</string>
     <string name="timeUpDefault">00:00</string>
     <string name="DefaultScore">000</string>
@@ -20,4 +21,26 @@
     <string name="pauseButtonLabel">Pause</string>
     <string name="startButtonLabel">Play</string>
     <string name="timerVal">0:00:00</string>
+    <string name="start_game">Start Game</string>
+    <string name="enable_discoverable">Enable Discoverable</string>
+    <string name="discover">Discover</string>
+    <string name="paired_devices">Paired Devices</string>
+    <string name="unpaired_devices">Unpaired Devices</string>
+    <string name="number_of_rounds">Number of Rounds</string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="cuttthroat">Cuttthroat</string>
+    <string name="basic">Basic</string>
+    <string name="welcome">Welcome to sliding Tiles</string>
+    <string name="Key_Name">Name</string>
+    <string name="submit">Submit</string>
+    <string name="editText_main">Enter your name here</string>
+    <string name="Math_mode">Math Mode</string>
+    <string name="Player_name">Player Name</string>
+    <string name="Number_mode">Number Mode</string>
+    <string-array name="roundsToPlay">
+        <item> 1 </item>
+        <item> 3 </item>
+        <item> 5 </item>
+        <item> 7 </item>
+    </string-array>
 </resources>

@@ -1,11 +1,16 @@
 package com.example.cody.slidingtiles;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,8 +23,11 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 
-public class MathMode extends AppCompatActivity {
+import java.io.IOException;
+import java.nio.charset.Charset;
 
+public class MathMode2Player extends AppCompatActivity {
+    private final String TAG = "MathMode2Player";
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -27,6 +35,13 @@ public class MathMode extends AppCompatActivity {
     private float ySubmittedTile;
     private float xSubmittedTile;
     private int axisLock;   // 1 = Vertical solution; 2 = Horizontal solution
+
+    // GAME STATE MANAGEMENT
+    int numberOfGames;
+    int currentGameNumber;
+    int playerWins = 0;
+    int opponentWins = 0;
+    int opponentScore = 0;
     int currentScore = 0;
 
     //UI Elements
@@ -53,11 +68,20 @@ public class MathMode extends AppCompatActivity {
     MathSolutionHandler equationHandler = new MathSolutionHandler();
     BoardGenerator boardGen = new BoardGenerator();
 
+    //bluetooth communication
+    public StringBuilder messages;
+    TextView incomingMessages;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
+
+        //input stream
+        //incomingMessages = new TextView(this);
+        messages = new StringBuilder();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("incomingMessage"));
 
         //Popup
         mContext = getApplicationContext();
@@ -69,9 +93,14 @@ public class MathMode extends AppCompatActivity {
         startTime = SystemClock.uptimeMillis();
         customHandler.postDelayed(updateTimerThread, 0);
 
+
         pauseButton = (Button) findViewById(R.id.pauseButton);
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                byte[] bytes = "Pause".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                pausefunction();
+                /*
                 timeSwapBuff += timeInMilliseconds;
                 customHandler.removeCallbacks(updateTimerThread);
 
@@ -82,12 +111,12 @@ public class MathMode extends AppCompatActivity {
                 mPopupWindow = new PopupWindow(
                         customView,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
                 );
-                mPopupWindow.setTouchable(true);
-                mPopupWindow.setFocusable(true);
-                mPopupWindow.setOutsideTouchable(false);
-
+                //mPopupWindow.setFocusable(true);
+                //mPopupWindow.update();
+                //mPopupWindow.setOutsideTouchable(false);
                 Button resumeButton = (Button) customView.findViewById(R.id.resume);
                 Button closeButton = (Button) customView.findViewById(R.id.exit);
                 Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
@@ -108,13 +137,25 @@ public class MathMode extends AppCompatActivity {
                 });
                 //customView.getWindowToken();
                 mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
-
+*/
 
             }
         });
 
         //Create a 2-D array of the board
-        tileMatrix = boardGen.generateMathModeBoard();
+
+        try {
+            Intent intent = getIntent();
+            String boardString = intent.getStringExtra("newGame");
+            tileMatrix = boardGen.mathModeBoardFromString(boardString);
+        }catch (Exception e){
+            try{
+                tileMatrix = boardGen.generateMathModeBoard();
+            }catch (Exception e1){
+                Log.e(TAG, "error creating default board");
+            }
+            Log.e(TAG, "error creating shared board");
+        }
 //        shuffleBoard(tileMatrix);
 
         //Move the contents of the 2-D array to the UI
@@ -126,7 +167,7 @@ public class MathMode extends AppCompatActivity {
         btnShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            DemandShuffle(tileMatrix);
+                DemandShuffle(tileMatrix);
             }
         });
 
@@ -215,16 +256,17 @@ public class MathMode extends AppCompatActivity {
             TextView submission = new TextView(this);
             if (equationHandler.getCountOfSubmittedTiles() != 0) {
                 int score = equationHandler.solve();
-                if (score == -1) {          // Invalid equation
+                if (score == -1) {
                     submission.setTextColor(Color.RED);
-//                } else if(score == 0 ) {
-//                    submission.setTextColor(Color.BLUE);
-                } else if(score == -2 ) {   // Incorrect format
+                } else if(score == 0 ) {
+                    submission.setTextColor(Color.BLUE);
+                } else if(score == -2 ) {
                     submission.setTextColor(Color.YELLOW);
-                } else if (score == -3) {   // Already Used
-                    submission.setTextColor(Color.DKGRAY);
                 } else {
                     submission.setTextColor(Color.GREEN);
+//!!!!                    //send to player 2
+                    byte[] bytes = equationHandler.getEquationString().getBytes(Charset.defaultCharset());
+                    writeWrapper(bytes);
                     updateScore(score);
                 }
                 submission.setTextSize(20);
@@ -342,6 +384,90 @@ public class MathMode extends AppCompatActivity {
         TextView playerScore = findViewById(R.id.currentScoreTextView);
         playerScore.setText(String.valueOf(currentScore));
     }
+
+    // wrapper for writing to the output stream
+    public void writeWrapper(byte[] bytes){
+        //Log.d(TAG, "writing out.");
+        ((BaseApp)this.getApplicationContext()).myBtConnection.write(bytes);
+    }
+
+    //Pause function.
+    public void pausefunction(){
+        timeSwapBuff += timeInMilliseconds;
+        customHandler.removeCallbacks(updateTimerThread);
+
+
+        //popup
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View customView = inflater.inflate(R.layout.popup,null);
+        mPopupWindow = new PopupWindow(
+                customView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+        //mPopupWindow.setFocusable(true);
+        //mPopupWindow.update();
+        //mPopupWindow.setOutsideTouchable(false);
+        Button resumeButton = (Button) customView.findViewById(R.id.resume);
+        Button closeButton = (Button) customView.findViewById(R.id.exit);
+        Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                byte[] bytes = "Exit".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                finish();
+                System.exit(0);
+            }
+        });
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                byte[] bytes = "Resume".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                startTime = SystemClock.uptimeMillis();
+                customHandler.postDelayed(updateTimerThread, 0);
+                mPopupWindow.dismiss();
+            }
+        });
+        //customView.getWindowToken();
+        mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+    }
+    //resume function
+    public void resumeFunction() {
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread, 0);
+        mPopupWindow.dismiss();
+    }
+    //resume function
+    public void exitFunction() {
+        finish();
+        System.exit(0);
+    }
+    //get input stream
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Log.d(TAG, "reading in.");
+            String text = intent.getStringExtra("theMessage");
+            if(text.contains("Pause")){
+                pausefunction();
+            }else if(text.contains("Resume")){
+                resumeFunction();
+            }else if(text.contains("Exit")){
+                exitFunction();
+            }else{
+                TextView submission = new TextView(context);
+                submission.setTextSize(20);
+                submission.setBackgroundColor(Color.GRAY);
+                submission.setTextColor(Color.MAGENTA);
+                submission.setText(text);
+                submissionHistoryWindow.addView(submission, 0);
+                equationHandler.addToSolutionBlackList(text);
+            }
+        }
+    };
 }
 
 

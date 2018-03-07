@@ -2,8 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cody.slidingtiles">
 
+    <!-- Bluetooth permissions !-->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
     <!-- <uses-sdk android:minSdkVersion="16"/> -->
     <application
+        android:name=".BaseApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,17 +18,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".NumberMode" />
         <activity android:name=".MathMode" />
+        <activity android:name=".MathMode2Player" />
+        <activity android:name=".BluetoothActivity" />
         <activity
             android:name=".HighScores"
             android:parentActivityName=".NumberMode">
+
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <!-- <meta-data -->
@@ -34,6 +44,13 @@
         <!-- <activity android:name=".GestureDetectGridView"/> -->
 
         <activity android:name=".NumberModeAI"></activity>
+        <activity android:name=".EnterName">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
