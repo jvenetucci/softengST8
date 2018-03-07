@@ -30,6 +30,13 @@
     <string name="togglebutton">ToggleButton</string>
     <string name="cuttthroat">Cuttthroat</string>
     <string name="basic">Basic</string>
+    <string name="welcome">Welcome to sliding Tiles</string>
+    <string name="Key_Name">Name</string>
+    <string name="submit">Submit</string>
+    <string name="editText_main">Enter your name here</string>
+    <string name="Math_mode">Math Mode</string>
+    <string name="Player_name">Player Name</string>
+    <string name="Number_mode">Number Mode</string>
     <string-array name="roundsToPlay">
         <item> 1 </item>
         <item> 3 </item>
