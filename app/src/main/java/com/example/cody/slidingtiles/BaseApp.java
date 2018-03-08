@@ -18,6 +18,8 @@ public class BaseApp extends Application{
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     BluetoothAdapter mBluetoothAdapter;
     public BluetoothConnectionService myBtConnection;
+    public String playerName = "Player 1";
+    public String opponentName = "Player 2";
 
     @Override
     public void onCreate() {

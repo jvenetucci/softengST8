@@ -48,9 +48,9 @@ public class BluetoothActivity extends AppCompatActivity{
     ListView lvNewDevices;
     ListView bondedDevices;
     private int numberOfRounds;
-    private int gameMode;
-    private static final int BASIC_MODE = 1;
-    private static final int CUTTTHROAT_MODE = 2;
+    private String gameMode;
+    private static final String BASIC_MODE = "BSC";
+    private static final String CUTTHROAT_MODE = "CUT";
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -228,7 +228,7 @@ public class BluetoothActivity extends AppCompatActivity{
 
         // default game mode
         gameMode = BASIC_MODE;
-        //Toggle button for the different game modes: CuttThroat or Basic
+        //Toggle button for the different game modes: CutThroat or Basic
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -237,9 +237,9 @@ public class BluetoothActivity extends AppCompatActivity{
                     Log.d(TAG, "Toggle : value" + gameMode);
                     gameMode = BASIC_MODE;
                 } else {
-                    // The toggle is disabled: CuttThroat Mode
+                    // The toggle is disabled: CutThroat Mode
                     Log.d(TAG, "Toggle : value" + gameMode);
-                    gameMode = CUTTTHROAT_MODE;
+                    gameMode = CUTTHROAT_MODE;
                 }
             }
         });
@@ -517,16 +517,19 @@ public class BluetoothActivity extends AppCompatActivity{
      */
     public void newActivity(View view) {
         BoardGenerator mBoardGenerator = new BoardGenerator();
-        int[][] sharedBoard;
+        //int[][] sharedBoard;
         String sharedBoardAsString = mBoardGenerator.boardToString(mBoardGenerator.generateMathModeBoard());
         Log.d(TAG, "new activity: " +sharedBoardAsString);
-        sharedBoard = mBoardGenerator.mathModeBoardFromString(sharedBoardAsString);
+        //sharedBoard = mBoardGenerator.mathModeBoardFromString(sharedBoardAsString);
         boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
         if (connectStatus) {
             Log.d(TAG, "new activity: connected " );
             try {
                 String gameStart = "Game Start";
+                gameStart += numberOfRounds;
+                gameStart += gameMode;
                 gameStart += sharedBoardAsString;
+                Log.d(TAG, "new Activity: write out all: " +gameStart);
                 byte [] bytes =  gameStart.getBytes(Charset.defaultCharset());
                 ((BaseApp) this.getApplicationContext()).myBtConnection.write(bytes);
             }catch (Exception e){
@@ -534,6 +537,11 @@ public class BluetoothActivity extends AppCompatActivity{
             }
             Intent intent = new Intent(this, MathMode2Player.class);
             intent.putExtra("newGame", sharedBoardAsString);
+            intent.putExtra("gameType",gameMode);
+            intent.putExtra("rounds", numberOfRounds);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             startActivity(intent);
         } else {
             Log.d(TAG, "new activity: NOT connected " );
@@ -549,9 +557,21 @@ public class BluetoothActivity extends AppCompatActivity{
             Log.d(TAG, "reading input stream..  " + text);
 
             if (text.contains("Game Start")){
-                String newBoard = text.substring(10);
+                if(text.contains("BSC")) {
+                    gameMode ="BSC";
+                }else{
+                    gameMode ="CUT";
+                }
+                numberOfRounds = Integer.valueOf(text.substring(10,11));
+                String newBoard = text.substring(14);
                 Intent start2Player= new Intent(context, MathMode2Player.class);
                 start2Player.putExtra("newGame",newBoard);
+                start2Player.putExtra("gameType",gameMode);
+                start2Player.putExtra("rounds", numberOfRounds);
+             //   Log.d(TAG, "ReceiverSyncOpen: Intent values: " +numberOfRounds +"|" + gameMode + "|" + newBoard);
+                start2Player.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                start2Player.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                start2Player.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
                 startActivity(start2Player);
             }
         }

@@ -2,53 +2,119 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rl"
     tools:context="com.example.cody.slidingtiles.MathMode">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="368dp"
-        android:layout_height="44dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="68dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="64dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/currentScoreTextView"
-            android:layout_width="141dp"
-            android:layout_height="wrap_content"
-            android:text="@string/DefaultScore"
-            app:layout_constraintBaseline_toBaselineOf="@+id/playerNameTextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/playerNameTextView"
-            tools:layout_editor_absoluteX="265dp"
-            tools:layout_editor_absoluteY="0dp" />
 
         <Button
             android:id="@+id/btnShuffle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/shuffle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="35dp"
-            tools:layout_editor_absoluteY="0dp" />
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/playerWinCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/default_wins"
+            app:layout_constraintBaseline_toBaselineOf="@+id/playerWinsTextView"
+            app:layout_constraintStart_toEndOf="@+id/playerWinsTextView"
+            android:layout_marginLeft="4dp" />
+
+        <TextView
+            android:id="@+id/opponentWinCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/default_wins"
+            app:layout_constraintBaseline_toBaselineOf="@+id/opponentWinsTextView"
+            app:layout_constraintStart_toEndOf="@+id/opponentWinsTextView"
+            android:layout_marginLeft="4dp" />
+
+        <TextView
+            android:id="@+id/playerWinsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="116dp"
+            android:text="@string/wins"
+            app:layout_constraintStart_toStartOf="@+id/btnShuffle"
+            app:layout_constraintTop_toTopOf="@+id/opponentWinsTextView"
+            android:layout_marginLeft="116dp" />
+
+        <TextView
+            android:id="@+id/opponentWinsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="140dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/wins"
+            app:layout_constraintStart_toStartOf="@+id/playerWinsTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="140dp" />
 
         <TextView
             android:id="@+id/playerNameTextView"
-            android:layout_width="88dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/score"
-            app:layout_constraintBaseline_toBaselineOf="@+id/btnShuffle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnShuffle" />
+            android:layout_marginStart="116dp"
+            android:text="@string/player_1"
+            app:layout_constraintBottom_toBottomOf="@+id/btnShuffle"
+            app:layout_constraintStart_toStartOf="@+id/btnShuffle"
+            android:layout_marginLeft="116dp" />
+
+        <TextView
+            android:id="@+id/playerScoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/DefaultScore"
+            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/playerNameTextView"
+            app:layout_constraintStart_toEndOf="@+id/playerNameTextView"
+            android:layout_marginLeft="4dp"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/opponentNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="140dp"
+            android:text="@string/player_2"
+            app:layout_constraintBottom_toBottomOf="@+id/playerScoreTextView"
+            app:layout_constraintStart_toStartOf="@+id/playerNameTextView"
+            android:layout_marginLeft="140dp" />
+
+        <TextView
+            android:id="@+id/opponentScoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/DefaultScore"
+            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/opponentNameTextView"
+            app:layout_constraintStart_toEndOf="@+id/opponentNameTextView"
+            android:layout_marginLeft="4dp"
+            android:gravity="start" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -79,18 +145,34 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginLeft="16dp" />
 
+        <TextView
+            android:id="@+id/roundCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/round"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/pauseButton"
+            app:layout_constraintStart_toEndOf="@+id/timerValue"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Button
             android:id="@+id/pauseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/pauseButtonLabel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            android:layout_marginRight="4dp" />
+            android:layout_marginRight="8dp" />
+
     </android.support.constraint.ConstraintLayout>
 
     <GridLayout
@@ -359,7 +441,6 @@
         app:layout_constraintBottom_toTopOf="@+id/submissionHistoryScrollWindow"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginLeft="8dp" />
-
 
 
 </android.support.constraint.ConstraintLayout>

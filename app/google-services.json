@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "192659295134",
+    "firebase_url": "https://softengst8.firebaseio.com",
+    "project_id": "softengst8",
+    "storage_bucket": "softengst8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:192659295134:android:8b84f3ab30bd8f11",
+        "android_client_info": {
+          "package_name": "com.example.cody.slidingtiles"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "192659295134-uo1m83qeqipssg9kq8jrqf3aj492862s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cody.slidingtiles",
+            "certificate_hash": "4107eab4441afdd22c690de23a07178c51f8e8e6"
+          }
+        },
+        {
+          "client_id": "192659295134-t46a0n0rj8a45fdhhjsikb3j2nev4t2p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cody.slidingtiles",
+            "certificate_hash": "ca6db74c9cd3abe3de949e087179ae5ea31e50f3"
+          }
+        },
+        {
+          "client_id": "192659295134-gjiljn7j8c8lcl1k8d4pil3td6mfmn5i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYd09STcd8flUdOLMo8bFVCjs29_kozm4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "192659295134-gjiljn7j8c8lcl1k8d4pil3td6mfmn5i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
