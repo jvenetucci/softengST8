@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
  */
 class MathSolutionHandler {
     LinkedHashSet<Button> tiles; //Used over HashSet because it keeps the insertion order
-    ArrayList<String> solutionBlackList; //Keep a list of valid submitted solutions
+    private ArrayList<String> solutionBlackList; //Keep a list of valid submitted solutions
 
 
     MathSolutionHandler() {
@@ -212,5 +212,9 @@ class MathSolutionHandler {
     //Player2's solutions
     public void addToSolutionBlackList(String string){
         solutionBlackList.add(string);
+    }
+
+    public void clearSolutionBlacklist(){
+        solutionBlackList.clear();
     }
 }

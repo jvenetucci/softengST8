@@ -37,6 +37,13 @@
     <string name="Math_mode">Math Mode</string>
     <string name="Player_name">Player Name</string>
     <string name="Number_mode">Number Mode</string>
+    <string name="round">Round:</string>
+    <string name="player_1">Player 1: </string>
+    <string name="player_2">Player 2: </string>
+    <string name="wins">Wins: </string>
+    <string name="default_round_count">1</string>
+    <string name="default_wins">0</string>
+    <string name="next_round">Next Round</string>
     <string-array name="roundsToPlay">
         <item> 1 </item>
         <item> 3 </item>
