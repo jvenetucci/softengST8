@@ -26,6 +26,8 @@ public class BaseApp extends Application{
         super.onCreate();
         Log.d(TAG, "in APP: OnCreate");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        myBtConnection = new BluetoothConnectionService(this);
+        if (mBluetoothAdapter != null) {
+            myBtConnection = new BluetoothConnectionService(this);
+        }
     }
 }
