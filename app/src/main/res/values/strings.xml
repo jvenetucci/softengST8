@@ -14,7 +14,7 @@
     <string name="bluetoothButtonLabel">Bluetooth</string>
     <string name="score">Score:</string>
     <string name="timeUpDefault">00:00</string>
-    <string name="DefaultScore">000</string>
+    <string name="DefaultScore">0</string>
     <string name="tileString">Tile</string>
     <string name="submission_history_title">Submission History</string>
     <string name="shuffle">SHUFFLE</string>
@@ -44,6 +44,8 @@
     <string name="default_round_count">1</string>
     <string name="default_wins">0</string>
     <string name="next_round">Next Round</string>
+    <string name="resume">Resume</string>
+    <string name="exit">Exit</string>
     <string-array name="roundsToPlay">
         <item> 1 </item>
         <item> 3 </item>

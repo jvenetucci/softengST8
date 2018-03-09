@@ -20,7 +20,7 @@
                 android:id="@+id/resume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Resume" />
+                android:text="@string/resume" />
             <Button
                 android:id="@+id/nextRound"
                 android:layout_width="fill_parent"
@@ -30,7 +30,7 @@
                 android:id="@+id/exit"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Exit" />
+                android:text="@string/exit" />
 
         </LinearLayout>
     </LinearLayout>

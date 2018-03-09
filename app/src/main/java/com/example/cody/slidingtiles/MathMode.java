@@ -5,23 +5,25 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.PopupWindow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
 
+import java.util.ArrayList;
+
 public class MathMode extends AppCompatActivity {
 
+    //Get from Base App
+    private String playerName;
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -30,6 +32,7 @@ public class MathMode extends AppCompatActivity {
     private float xSubmittedTile;
     private int axisLock;   // 1 = Vertical solution; 2 = Horizontal solution
     int currentScore = 0;
+    private ArrayList<String> solutionList;
 
     //UI Elements
     Button emptyTileButton;
@@ -59,7 +62,8 @@ public class MathMode extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
 
-
+        // Get player name
+        playerName = ((BaseApp)this.getApplicationContext()).playerName;
         // Timer implementation
         timerValue = (TextView) findViewById(R.id.timerValue);
         startTime = SystemClock.uptimeMillis();
@@ -89,16 +93,24 @@ public class MathMode extends AppCompatActivity {
                     public void onClick(View view) {
                         // -------------------------- inside dialog ---------------------------- //
                         // custom dialog
-                        final Dialog dialog1 = new Dialog(context);
+                        Dialog dialog1 = new Dialog(context);
                         dialog1.getWindow().setGravity(Gravity.CENTER);
-                        dialog1.setContentView(R.layout.popup1);
+                        dialog1.setContentView(R.layout.popup_player_score);
                         dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
                         dialog1.setCanceledOnTouchOutside(false);
 
                         //dialog.setTitle("Title.");
-                        TextView scoreView = (TextView) dialog1.findViewById(R.id.player_score);
-                        TextView playerWin = (TextView) dialog1.findViewById(R.id.player_win) ;
+                        TextView playerID = (TextView) dialog1.findViewById(R.id.player_name) ;
+                        playerID.setText(playerName);
+                        TextView gameScore = (TextView) dialog1.findViewById(R.id.player_score);
+                        gameScore.setText("Your Score: " + currentScore);
                         Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
+                        LinearLayout validSubmission = dialog1.findViewById(R.id.validSubmissionHistory);
+                        for(String equation : solutionList){
+                            TextView addDisplay = new TextView(context);
+                            addDisplay.setText(equation);
+                            validSubmission.addView(addDisplay,0);
+                        }
 
                         closeButton1.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View view) {
@@ -129,7 +141,8 @@ public class MathMode extends AppCompatActivity {
 
         //Create a 2-D array of the board
         tileMatrix = boardGen.generateMathModeBoard();
-//        shuffleBoard(tileMatrix);
+        boardGen.shuffleBoard(tileMatrix);
+        solutionList = new ArrayList<>();
 
         //Move the contents of the 2-D array to the UI
         board = findViewById(R.id.board);
@@ -240,6 +253,7 @@ public class MathMode extends AppCompatActivity {
                 } else {
                     submission.setTextColor(Color.GREEN);
                     updateScore(score);
+                    solutionList.add(equationHandler.getEquationString());
                 }
                 submission.setTextSize(20);
                 submission.setBackgroundColor(Color.GRAY);

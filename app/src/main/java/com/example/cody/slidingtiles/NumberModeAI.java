@@ -100,7 +100,7 @@ public class NumberModeAI extends AppCompatActivity {
                     public void onClick(View view) {
                         // -------------------------- inside dialog ---------------------------- //
                         // custom dialog
-                        final Dialog dialog1 = new Dialog(context);
+/*                        final Dialog dialog1 = new Dialog(context);
                         dialog1.getWindow().setGravity(Gravity.CENTER);
                         dialog1.setContentView(R.layout.popup1);
                         dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -120,8 +120,9 @@ public class NumberModeAI extends AppCompatActivity {
                         });
 
                         dialog1.show();
-                        // -------------------------- inside dialog end---------------------------- //
-
+ */                       // -------------------------- inside dialog end---------------------------- /
+                        finish();
+                        System.exit(0);
                     }
                 });
                 resumeButton.setOnClickListener(new View.OnClickListener() {
