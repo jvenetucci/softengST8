@@ -1,8 +1,10 @@
 package com.example.cody.slidingtiles;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,9 +47,7 @@ public class MathMode extends AppCompatActivity {
     long updatedTime = 0L;
 
     //Popup window
-    private Context mContext;
-    private PopupWindow mPopupWindow;
-    private ConstraintLayout mRelativeLayout;
+    final Context context = this;
 
     //Helper Classes
     MathSolutionHandler equationHandler = new MathSolutionHandler();
@@ -58,10 +58,6 @@ public class MathMode extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
-
-        //Popup
-        mContext = getApplicationContext();
-        mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
 
 
         // Timer implementation
@@ -76,40 +72,58 @@ public class MathMode extends AppCompatActivity {
                 customHandler.removeCallbacks(updateTimerThread);
 
 
-                //popup
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-                View customView = inflater.inflate(R.layout.popup,null);
-                mPopupWindow = new PopupWindow(
-                        customView,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                );
-                mPopupWindow.setTouchable(true);
-                mPopupWindow.setFocusable(true);
-                mPopupWindow.setOutsideTouchable(false);
+                // -------------------------- dialouge popup -------------------------//
+                // custom dialog
+                final Dialog dialog = new Dialog(context);
+                dialog.getWindow().setGravity(Gravity.CENTER);
+                dialog.setContentView(R.layout.popup);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                dialog.setCanceledOnTouchOutside(false);
 
-                Button resumeButton = (Button) customView.findViewById(R.id.resume);
-                Button closeButton = (Button) customView.findViewById(R.id.exit);
-                Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+
+                Button resumeButton = (Button) dialog.findViewById(R.id.resume);
+                Button closeButton = (Button) dialog.findViewById(R.id.exit);
 
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        finish();
-                        System.exit(0);
+                        // -------------------------- inside dialog ---------------------------- //
+                        // custom dialog
+                        final Dialog dialog1 = new Dialog(context);
+                        dialog1.getWindow().setGravity(Gravity.CENTER);
+                        dialog1.setContentView(R.layout.popup1);
+                        dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        dialog1.setCanceledOnTouchOutside(false);
+
+                        //dialog.setTitle("Title.");
+                        TextView scoreView = (TextView) dialog1.findViewById(R.id.player_score);
+                        TextView playerWin = (TextView) dialog1.findViewById(R.id.player_win) ;
+                        Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
+
+                        closeButton1.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View view) {
+                                finish();
+                                System.exit(0);
+
+                            }
+                        });
+
+                        dialog1.show();
+                        // -------------------------- inside dialog end---------------------------- //
+
                     }
                 });
                 resumeButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         startTime = SystemClock.uptimeMillis();
                         customHandler.postDelayed(updateTimerThread, 0);
-                        mPopupWindow.dismiss();
+                        dialog.dismiss();
+
                     }
                 });
-                //customView.getWindowToken();
-                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
 
-
+                dialog.show();
+                // -------------------------- dialogue popup end ---------------------//
             }
         });
 
