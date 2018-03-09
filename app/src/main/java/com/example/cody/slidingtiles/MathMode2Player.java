@@ -70,6 +70,8 @@ public class MathMode2Player extends AppCompatActivity {
     //Helper Classes
     MathSolutionHandler equationHandler = new MathSolutionHandler();
     BoardGenerator boardGen = new BoardGenerator();
+    MathSolutionHandler playerEQHandler = new MathSolutionHandler();
+    MathSolutionHandler opponentEQHandler = new MathSolutionHandler();
 
     //bluetooth communication
     public StringBuilder messages;
@@ -104,6 +106,11 @@ public class MathMode2Player extends AppCompatActivity {
             opponentWins = intent.getIntExtra("oppWin", 0);
             TextView opponentWinsTextView = (TextView) findViewById(R.id.opponentWinCount);
             opponentWinsTextView.setText(String.valueOf(opponentWins));
+            TextView playerNameTextView = (TextView) findViewById(R.id.playerNameTextView);
+            playerNameTextView.setText(((BaseApp)this.getApplicationContext()).playerName +": ");
+            TextView opponentNameTextView = (TextView) findViewById(R.id.opponentNameTextView);
+            ((BaseApp)this.getApplicationContext()).opponentName =intent.getStringExtra("oppName");
+            opponentNameTextView.setText(((BaseApp)this.getApplicationContext()).opponentName +": ");
         }catch (Exception e){
             try{
                 tileMatrix = boardGen.generateMathModeBoard();
@@ -294,15 +301,18 @@ public class MathMode2Player extends AppCompatActivity {
             TextView submission = new TextView(this);
             if (equationHandler.getCountOfSubmittedTiles() != 0) {
                 int score = equationHandler.solve();
-                if (score == -1) {
+                if (score == -1) {          // Invalid equation
                     submission.setTextColor(Color.RED);
-                } else if(score == 0 ) {
-                    submission.setTextColor(Color.BLUE);
-                } else if(score == -2 ) {
+//                } else if(score == 0 ) {
+//                    submission.setTextColor(Color.BLUE);
+                } else if(score == -2 ) {   // Incorrect format
                     submission.setTextColor(Color.YELLOW);
+                } else if (score == -3) {   // Already Used
+                    submission.setTextColor(Color.DKGRAY);
                 } else {
                     submission.setTextColor(Color.GREEN);
-//!!!!                    //send to player 2
+//!!!!                    //send to player 2 and add to our own blacklist
+                    playerEQHandler.addToSolutionBlackList(equationHandler.getEquationString());
                     byte[] bytes = equationHandler.getEquationString().getBytes(Charset.defaultCharset());
                     writeWrapper(bytes);
                     updateScore(score);
@@ -546,6 +556,8 @@ public class MathMode2Player extends AppCompatActivity {
         board = findViewById(R.id.board);
         displayBoardMatrixUI(board);
         equationHandler.clearSolutionBlacklist();
+        opponentEQHandler.clearSolutionBlacklist();
+        playerEQHandler.clearSolutionBlacklist();
     }
 
     //nextRound function
@@ -608,6 +620,7 @@ public class MathMode2Player extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Log.d(TAG, "reading in.");
+            int scoreToAdd = 0;
             String text = intent.getStringExtra("theMessage");
             if(text.contains("Pause")){
                 pauseFunction();
@@ -647,12 +660,7 @@ public class MathMode2Player extends AppCompatActivity {
             }
 
             else{
-                TextView submission = new TextView(context);
-                submission.setTextSize(20);
-                submission.setBackgroundColor(Color.GRAY);
-                submission.setTextColor(Color.MAGENTA);
-                submission.setText(text);
-                submissionHistoryWindow.addView(submission, 0);
+
                 //equationHandler.addToSolutionBlackList(text);
                 int[] oppEquation = new int[5];
                 for(int i = 0; i < 5; i++) {
@@ -678,8 +686,21 @@ public class MathMode2Player extends AppCompatActivity {
                             oppEquation[i] = Character.getNumericValue(text.charAt(i * 2));
                     }
                 }
-                Log.d(TAG, "reading in equation: " + oppEquation[0]+ "|" + oppEquation[1]+"|" +oppEquation[2]+"|" +oppEquation[3]+"|" +oppEquation[4]);
-                int scoreToAdd = equationHandler.solveEquation(oppEquation);
+                // CUTthroat means we solutions are usable only once by either player
+                // BSC means solutions are individual and we should not show it
+                if(gameMode.compareTo("CUT") ==0){
+                    TextView submission = new TextView(context);
+                    submission.setTextSize(20);
+                    submission.setBackgroundColor(Color.GRAY);
+                    submission.setTextColor(Color.MAGENTA);
+                    submission.setText(text);
+                    submissionHistoryWindow.addView(submission, 0);
+                    opponentEQHandler.addToSolutionBlackList(text);
+                    Log.d(TAG, "reading in equation: " + oppEquation[0]+ "|" + oppEquation[1]+"|" +oppEquation[2]+"|" +oppEquation[3]+"|" +oppEquation[4]);
+                    scoreToAdd = equationHandler.solveEquation(oppEquation);
+                }else{
+                    scoreToAdd = opponentEQHandler.solveEquation(oppEquation);
+                }
 
                 updateOppScore(scoreToAdd);
             }

@@ -1,6 +1,7 @@
 package com.example.cody.slidingtiles;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -49,9 +50,9 @@ public class BluetoothActivity extends AppCompatActivity{
     ListView bondedDevices;
     private int numberOfRounds;
     private String gameMode;
+    private String oppTempName;
     private static final String BASIC_MODE = "BSC";
     private static final String CUTTHROAT_MODE = "CUT";
-
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     // Create a BroadcastReceiver for ACTION_STATE_CHANGED
@@ -200,7 +201,11 @@ public class BluetoothActivity extends AppCompatActivity{
         mBondedBTDevices = new ArrayList<>();
         mNewBTDevices = new ArrayList<>();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        //set our name here
+        Log.d (TAG, "our device name is..: " + mBluetoothAdapter.getName());
+        if(((BaseApp)this.getApplicationContext()).playerName.compareTo("Player 1") != 0) {
+            mBluetoothAdapter.setName(((BaseApp) this.getApplicationContext()).playerName);
+        }
         //Broadcasts when bond state changes (ie:pairing)
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBroadcastReceiver4, filter);
@@ -341,6 +346,9 @@ public class BluetoothActivity extends AppCompatActivity{
         if (mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
             Log.d(TAG, "startConnection: BONDED.");
             startBTConnection(mBTDevice, MY_UUID_INSECURE);
+            if(mBTDevice.getName().compareTo("Player 1") != 0 &&
+                    ((BaseApp)this.getApplicationContext()).playerName.compareTo("") != 0) {
+            }
         }
     }
     public void startBTConnection(BluetoothDevice device, UUID uuid){
@@ -519,6 +527,8 @@ public class BluetoothActivity extends AppCompatActivity{
         BoardGenerator mBoardGenerator = new BoardGenerator();
         //int[][] sharedBoard;
         String sharedBoardAsString = mBoardGenerator.boardToString(mBoardGenerator.generateMathModeBoard());
+        ((BaseApp) this.getApplicationContext()).opponentName = mBTDevice.getName();
+        oppTempName = ((BaseApp) this.getApplicationContext()).opponentName;
         Log.d(TAG, "new activity: " +sharedBoardAsString);
         //sharedBoard = mBoardGenerator.mathModeBoardFromString(sharedBoardAsString);
         boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
@@ -529,6 +539,8 @@ public class BluetoothActivity extends AppCompatActivity{
                 gameStart += numberOfRounds;
                 gameStart += gameMode;
                 gameStart += sharedBoardAsString;
+     //           gameStart += ((BaseApp) this.getApplicationContext()).playerName;
+                gameStart += "Tyler";
                 Log.d(TAG, "new Activity: write out all: " +gameStart);
                 byte [] bytes =  gameStart.getBytes(Charset.defaultCharset());
                 ((BaseApp) this.getApplicationContext()).myBtConnection.write(bytes);
@@ -539,6 +551,7 @@ public class BluetoothActivity extends AppCompatActivity{
             intent.putExtra("newGame", sharedBoardAsString);
             intent.putExtra("gameType",gameMode);
             intent.putExtra("rounds", numberOfRounds);
+            intent.putExtra("oppName", oppTempName);
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
@@ -563,11 +576,13 @@ public class BluetoothActivity extends AppCompatActivity{
                     gameMode ="CUT";
                 }
                 numberOfRounds = Integer.valueOf(text.substring(10,11));
-                String newBoard = text.substring(14);
+                String newBoard = text.substring(14,72);
+                oppTempName = text.substring(73);
                 Intent start2Player= new Intent(context, MathMode2Player.class);
                 start2Player.putExtra("newGame",newBoard);
                 start2Player.putExtra("gameType",gameMode);
                 start2Player.putExtra("rounds", numberOfRounds);
+                start2Player.putExtra("oppName", oppTempName);
              //   Log.d(TAG, "ReceiverSyncOpen: Intent values: " +numberOfRounds +"|" + gameMode + "|" + newBoard);
                 start2Player.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 start2Player.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
