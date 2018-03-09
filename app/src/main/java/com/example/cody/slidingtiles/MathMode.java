@@ -229,12 +229,14 @@ public class MathMode extends AppCompatActivity {
             TextView submission = new TextView(this);
             if (equationHandler.getCountOfSubmittedTiles() != 0) {
                 int score = equationHandler.solve();
-                if (score == -1) {
+                if (score == -1) {          // Invalid equation
                     submission.setTextColor(Color.RED);
-                } else if(score == 0 ) {
-                    submission.setTextColor(Color.BLUE);
-                } else if(score == -2 ) {
+//                } else if(score == 0 ) {
+//                    submission.setTextColor(Color.BLUE);
+                } else if(score == -2 ) {   // Incorrect format
                     submission.setTextColor(Color.YELLOW);
+                } else if (score == -3) {   // Already Used
+                    submission.setTextColor(Color.DKGRAY);
                 } else {
                     submission.setTextColor(Color.GREEN);
                     updateScore(score);

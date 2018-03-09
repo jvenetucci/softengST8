@@ -185,10 +185,10 @@ class BoardGenerator {
         int sum = 0;
 
         for(int i = 0; i < size - 1; ++i){
-            if(list.get(i) != 0){
+            if(list.get(i) != -1){
                 count = 0;
                 for (int j = i + 1; j < size; ++j){
-                    if ((list.get(i) > list.get(j)) && (list.get(j) != 0)){
+                    if ((list.get(i) > list.get(j)) && (list.get(j) != -1)){
                         ++count;
                     }
                 }
