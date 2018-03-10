@@ -1,11 +1,14 @@
 package com.example.cody.slidingtiles;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.os.Handler;
@@ -67,8 +71,9 @@ public class MathMode2Player extends AppCompatActivity {
 
     //Popup window
     private Context mContext;
-    private PopupWindow mPopupWindow;
-    private ConstraintLayout mRelativeLayout;
+    private Dialog mPauseDialog;
+    private Dialog mResultDialog;
+
 
     //Helper Classes
     MathSolutionHandler equationHandler = new MathSolutionHandler();
@@ -76,6 +81,8 @@ public class MathMode2Player extends AppCompatActivity {
     MathSolutionHandler opponentEQHandler = new MathSolutionHandler();
     private ArrayList<String> playerSolutionList;
     private ArrayList<String> opponentSolutionList;
+    LinearLayout validSubmission;
+    LinearLayout opponentSubmission;
     //bluetooth communication
     public StringBuilder messages;
     TextView incomingMessages;
@@ -93,7 +100,7 @@ public class MathMode2Player extends AppCompatActivity {
 
         //Initialize the game state:
         //Create a 2-D array of the board
-        //Set Rounds
+        //Set Rounds, player names, etc..
         try {
             Intent intent = getIntent();
             String boardString = intent.getStringExtra("newGame");
@@ -110,12 +117,22 @@ public class MathMode2Player extends AppCompatActivity {
             TextView opponentWinsTextView = (TextView) findViewById(R.id.opponentWinCount);
             opponentWinsTextView.setText(String.valueOf(opponentWins));
             TextView playerNameTextView = (TextView) findViewById(R.id.playerNameTextView);
-            playerNameTextView.setText(((BaseApp)this.getApplicationContext()).playerName +": ");
-            TextView opponentNameTextView = (TextView) findViewById(R.id.opponentNameTextView);
             localPlayerName =((BaseApp)this.getApplicationContext()).playerName;
+            if(localPlayerName.length() > 10){
+                String displayName = localPlayerName.substring(0,9) + ": ";
+                playerNameTextView.setText(displayName);
+            }else{
+                playerNameTextView.setText(localPlayerName + ": ");
+            }
+            TextView opponentNameTextView = (TextView) findViewById(R.id.opponentNameTextView);
             ((BaseApp)this.getApplicationContext()).opponentName =intent.getStringExtra("oppName");
-            opponentNameTextView.setText(((BaseApp)this.getApplicationContext()).opponentName +": ");
             localOpponentName = intent.getStringExtra("oppName");
+            if(localOpponentName.length() > 10){
+                String oppDisplayName = localOpponentName.substring(0,9) + ": ";
+                opponentNameTextView.setText(oppDisplayName);
+            }else{
+                opponentNameTextView.setText(localOpponentName +": ");
+            }
         }catch (Exception e){
             try{
                 tileMatrix = boardGen.generateMathModeBoard();
@@ -125,83 +142,106 @@ public class MathMode2Player extends AppCompatActivity {
             Log.e(TAG, "error creating shared board");
         }
 
-        //Popup
-        mContext = ((BaseApp)this.getApplicationContext());
-        mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
-
-
         // Timer implementation
         timerValue = (TextView) findViewById(R.id.timerValue);
         startTime = SystemClock.uptimeMillis();
         customHandler.postDelayed(updateTimerThread, 0);
-        // TEST WITH ONLY NEXT ROUND BUTTON
-/*/
-        Button nextRoundButton = (Button) findViewById(R.id.pauseButton);
-        nextRoundButton.setText("Next Round");
+
+        //Popup
+        mContext = this;
+        // -------------------------- Result dialog popup -------------------------//
+        mResultDialog = new Dialog(mContext);
+        mResultDialog.getWindow().setGravity(Gravity.CENTER);
+        mResultDialog.setContentView(R.layout.popup_two_player_score);
+        mResultDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mResultDialog.setCanceledOnTouchOutside(false);
+
+        // -------------------------- Pause dialog popup -------------------------//
+        mPauseDialog = new Dialog(mContext);
+        mPauseDialog.getWindow().setGravity(Gravity.CENTER);
+        mPauseDialog.setContentView(R.layout.popup2);
+        mPauseDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mPauseDialog.setCanceledOnTouchOutside(false);
+
+
+        Button closeButton = (Button) mPauseDialog.findViewById(R.id.exit);
+        Button resumeButton = (Button) mPauseDialog.findViewById(R.id.resume);
+        Button nextRoundButton = (Button) mPauseDialog.findViewById(R.id.nextRound);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPauseDialog.dismiss();
+                byte[] bytes = "Exit".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                finish();
+                System.exit(0);
+            }
+        });
+
         nextRoundButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nextRoundActivity();
-            }
-        });
-//*/
-//*      Remove the Pause pop-up completely??
+                byte[] bytes = "Showtime".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
+                showGameResult();
+                /*
+                mPauseDialog.dismiss();
+
+                // Player Display section
+                TextView playerID = (TextView) mResultDialog.findViewById(R.id.player_name);
+                playerID.setText(localPlayerName);
+                TextView myScore = (TextView) mResultDialog.findViewById(R.id.player_score);
+                myScore.setText("Your Score: " + currentScore);
+                validSubmission = mResultDialog.findViewById(R.id.validSubmissionHistory);
+                for (String equation : playerSolutionList) {
+                    TextView addDisplay = new TextView(mContext);
+                    addDisplay.setText(equation);
+                    validSubmission.addView(addDisplay, 0);
+                }
+
+                //Opponent Display section
+                TextView opponentID = (TextView) mResultDialog.findViewById(R.id.opponent_name);
+                opponentID.setText(localOpponentName);
+                TextView yourScore = (TextView) mResultDialog.findViewById(R.id.opponent_score);
+                yourScore.setText("Their Score: " + opponentScore);
+                opponentSubmission = mResultDialog.findViewById(R.id.opponentSubmissionHistory);
+                for (String equation : opponentSolutionList) {
+                    TextView addDisplay = new TextView(mContext);
+                    addDisplay.setText(equation);
+                    opponentSubmission.addView(addDisplay, 0);
+                }
+
+                //Confirm game status and leave.
+                Button closeButton1 = (Button) mResultDialog.findViewById(R.id.exit1);
+                closeButton1.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        mResultDialog.dismiss();
+                        nextRoundActivity();
+
+                    }
+                });
+
+                mResultDialog.show();*/
+        }});
         pauseButton = (Button) findViewById(R.id.pauseButton);
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 byte[] bytes = "Pause".getBytes(Charset.defaultCharset());
                 writeWrapper(bytes);
-
                 timeSwapBuff += timeInMilliseconds;
                 customHandler.removeCallbacks(updateTimerThread);
-
-
-                //popup
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-                View customView = inflater.inflate(R.layout.popup2,null);
-                mPopupWindow = new PopupWindow(
-                        customView,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        true
-                );
-                //mPopupWindow.setFocusable(true);
-                //mPopupWindow.update();
-                //mPopupWindow.setOutsideTouchable(false);
-                Button resumeButton = (Button) customView.findViewById(R.id.resume);
-                Button closeButton = (Button) customView.findViewById(R.id.exit);
-                Button nextRoundButton = (Button) customView.findViewById(R.id.nextRound);
-
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mPopupWindow.dismiss();
-                        byte[] bytes = "Exit".getBytes(Charset.defaultCharset());
-                        writeWrapper(bytes);
-                        finish();
-                        System.exit(0);
-                    }
-                });
-                resumeButton.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        startTime = SystemClock.uptimeMillis();
-                        customHandler.postDelayed(updateTimerThread, 0);
-                        mPopupWindow.dismiss();
-                        byte[] bytes = "Resume".getBytes(Charset.defaultCharset());
-                        writeWrapper(bytes);
-                    }
-                });
-                nextRoundButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mPopupWindow.dismiss();
-                        nextRoundActivity();
-                    }
-                });
-                //customView.getWindowToken();
-                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
-
-
+                mPauseDialog.show();
+                // -------------------------- dialogue popup end ---------------------//
+            }
+        });
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                startTime = SystemClock.uptimeMillis();
+                customHandler.postDelayed(updateTimerThread, 0);
+                mPauseDialog.dismiss();
+                byte[] bytes = "Resume".getBytes(Charset.defaultCharset());
+                writeWrapper(bytes);
             }
         });
 //*/
@@ -454,72 +494,90 @@ public class MathMode2Player extends AppCompatActivity {
         ((BaseApp)this.getApplicationContext()).myBtConnection.write(bytes);
     }
 
-
-
-//*    //Pause function.
-    public void pauseFunction(){
-
-        timeSwapBuff += timeInMilliseconds;
-        customHandler.removeCallbacks(updateTimerThread);
-
-
-        //popup
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View customView = inflater.inflate(R.layout.popup2,null);
-        mPopupWindow = new PopupWindow(
-                customView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                true
-        );
-        //mPopupWindow.setFocusable(true);
-        //mPopupWindow.update();
-        //mPopupWindow.setOutsideTouchable(false);
-        Button resumeButton = (Button) customView.findViewById(R.id.resume);
-        Button closeButton = (Button) customView.findViewById(R.id.exit);
-        Button nextRoundButton = (Button) customView.findViewById(R.id.nextRound);
-
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPopupWindow.dismiss();
-                byte[] bytes = "Exit".getBytes(Charset.defaultCharset());
-                writeWrapper(bytes);
-                finish();
-                System.exit(0);
+   //nextRound function called when remote device sends the message for the next round.
+   // I.E. show end game stats first
+    public void showGameResult(){
+        mPauseDialog.dismiss();
+        if(currentScore > opponentScore){
+            playerWins++;
+        }else if(opponentScore > currentScore){
+            opponentWins++;
+        }
+        // Display the winner of the Round or Game if applicable
+        TextView gameScores = mResultDialog.findViewById(R.id.win_lose);
+        TextView gameWinner = mResultDialog.findViewById(R.id.matchResult);
+        if(currentGameNumber == numberOfGames){
+            gameScores.setText(playerWins + " : " + opponentWins);
+            if(playerWins == opponentWins) {
+                gameWinner.setText("MATCH OVER..Its a TIE!");
             }
-        });
-        resumeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                startTime = SystemClock.uptimeMillis();
-                customHandler.postDelayed(updateTimerThread, 0);
-                mPopupWindow.dismiss();
-                byte[] bytes = "Resume".getBytes(Charset.defaultCharset());
-                writeWrapper(bytes);
+            if(playerWins > opponentWins){
+                gameWinner.setText("MATCH OVER..You WIN!");
             }
-        });
-        nextRoundButton.setOnClickListener(new View.OnClickListener() {
-            @Override
+            if(playerWins < opponentWins){
+                gameWinner.setText("MATCH OVER..You LOSE!");
+            }
+        }else{
+            gameScores.setText(playerWins + " : " + opponentWins);
+            if(currentScore == opponentScore) {
+                gameWinner.setText("Its a TIE!");
+            }
+            if(currentScore > opponentScore){
+                gameWinner.setText("You WIN!");
+            }
+            if(currentScore < opponentScore){
+                gameWinner.setText("You LOSE!");
+            }
+        }
+        // Player Display section
+        TextView playerID = (TextView) mResultDialog.findViewById(R.id.player_name);
+        playerID.setText(localPlayerName);
+        TextView myScore = (TextView) mResultDialog.findViewById(R.id.player_score);
+        myScore.setText("Your Score: " + currentScore);
+        validSubmission = mResultDialog.findViewById(R.id.validSubmissionHistory);
+        for (String equation : playerSolutionList) {
+            TextView addDisplay = new TextView(mContext);
+            addDisplay.setText(equation);
+            validSubmission.addView(addDisplay, 0);
+        }
+
+        //Opponent Display section
+        TextView opponentID = (TextView) mResultDialog.findViewById(R.id.opponent_name);
+        opponentID.setText(localOpponentName);
+        TextView yourScore = (TextView) mResultDialog.findViewById(R.id.opponent_score);
+        yourScore.setText("Their Score: " + opponentScore);
+        opponentSubmission = mResultDialog.findViewById(R.id.opponentSubmissionHistory);
+        for (String equation : opponentSolutionList) {
+            TextView addDisplay = new TextView(mContext);
+            addDisplay.setText(equation);
+            opponentSubmission.addView(addDisplay, 0);
+        }
+        //Confirm game status and leave.
+        Button closeButton1 = (Button) mResultDialog.findViewById(R.id.exit1);
+        closeButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                mPopupWindow.dismiss();
+                mResultDialog.dismiss();
                 nextRoundActivity();
             }
         });
-        //customView.getWindowToken();
-        mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+        mResultDialog.show();
+    }
 
-
+//*    //Pause function called when remote device sends the message to pause.
+    public void pauseFunction(){
+        timeSwapBuff += timeInMilliseconds;
+        customHandler.removeCallbacks(updateTimerThread);
+        mPauseDialog.show();
     }
 //*/
-    //resume function
+    //resume function called when the remote device sends the message to resume
     public void resumeFunction() {
         startTime = SystemClock.uptimeMillis();
         customHandler.postDelayed(updateTimerThread, 0);
-        mPopupWindow.dismiss();
+        mPauseDialog.dismiss();
     }
-    //exit function
+    //exit function called when the remote device sends the message to exit
     public void exitFunction() {
-        mPopupWindow.dismiss();
         finish();
         System.exit(0);
     }
@@ -556,7 +614,8 @@ public class MathMode2Player extends AppCompatActivity {
             TextView oppScore = findViewById(R.id.opponentScoreTextView);
             oppScore.setText(String.valueOf(opponentScore));
 
-
+            validSubmission.removeAllViews();
+            opponentSubmission.removeAllViews();
             submissionHistoryWindow.removeAllViews();
         }catch (Exception e) {
             Log.d(TAG, "Fail to update UI");
@@ -572,17 +631,9 @@ public class MathMode2Player extends AppCompatActivity {
     //Determine the winner.
     //If we are at the max number of games, display the final winner.
     public void nextRoundActivity(){
-        if(currentScore > opponentScore){
-            playerWins++;
-        }else if(opponentScore > currentScore){
-            opponentWins++;
-        }
+
         if(currentGameNumber == numberOfGames){
-            if(playerWins > opponentWins){
-                Toast.makeText(this, "Player 1 wins!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Player 2 wins!", Toast.LENGTH_LONG).show();
-            }
+
             boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
             if (connectStatus) {
                 Log.d(TAG, "Next Round: Ending Game ");
@@ -598,7 +649,10 @@ public class MathMode2Player extends AppCompatActivity {
             }
         }else {
             currentGameNumber++;
-            String sharedBoardAsString = boardGen.boardToString(boardGen.generateMathModeBoard());
+            int[][] sharedBoard = boardGen.generateMathModeBoard();
+            boardGen.shuffleBoard(sharedBoard);
+            String sharedBoardAsString = boardGen.boardToString(sharedBoard);
+            //String sharedBoardAsString = boardGen.boardToString(boardGen.generateMathModeBoard());
             Log.d(TAG, "Next Round: " +sharedBoardAsString);
             boolean connectStatus = ((BaseApp) this.getApplicationContext()).myBtConnection.getState();
             if (connectStatus) {
@@ -636,9 +690,14 @@ public class MathMode2Player extends AppCompatActivity {
                 resumeFunction();
             }else if(text.contains("Exit")){
                 exitFunction();
-            }
-            else if(text.contains("Next Round")) {
-                mPopupWindow.dismiss();
+            }else if(text.contains("Showtime")){
+                showGameResult();
+            }else if(text.contains("Next Round")) {
+                try{
+                    mResultDialog.dismiss();
+                }catch (Exception e){
+                    Log.e(TAG," no dialog box to dismiss");
+                }
                 if(currentScore > opponentScore){
                     playerWins++;
                 }else if(opponentScore > currentScore){
@@ -707,6 +766,7 @@ public class MathMode2Player extends AppCompatActivity {
                     Log.d(TAG, "reading in equation: " + oppEquation[0]+ "|" + oppEquation[1]+"|" +oppEquation[2]+"|" +oppEquation[3]+"|" +oppEquation[4]);
                     scoreToAdd = equationHandler.solveEquation(oppEquation);
                 }else{
+                    opponentSolutionList.add(text);
                     scoreToAdd = opponentEQHandler.solveEquation(oppEquation);
                 }
 

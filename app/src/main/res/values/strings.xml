@@ -46,6 +46,9 @@
     <string name="next_round">Next Round</string>
     <string name="resume">Resume</string>
     <string name="exit">Exit</string>
+    <string name="game_win">Game Win</string>
+    <string name="win_count">win_count</string>
+    <string name="string_win_count">0 : 0</string>
     <string-array name="roundsToPlay">
         <item> 1 </item>
         <item> 3 </item>

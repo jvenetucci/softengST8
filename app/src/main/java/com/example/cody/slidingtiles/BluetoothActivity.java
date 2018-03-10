@@ -346,9 +346,7 @@ public class BluetoothActivity extends AppCompatActivity{
         if (mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
             Log.d(TAG, "startConnection: BONDED.");
             startBTConnection(mBTDevice, MY_UUID_INSECURE);
-            if(mBTDevice.getName().compareTo("Player 1") != 0 &&
-                    ((BaseApp)this.getApplicationContext()).playerName.compareTo("") != 0) {
-            }
+
         }
     }
     public void startBTConnection(BluetoothDevice device, UUID uuid){
@@ -525,8 +523,10 @@ public class BluetoothActivity extends AppCompatActivity{
      */
     public void newActivity(View view) {
         BoardGenerator mBoardGenerator = new BoardGenerator();
-        //int[][] sharedBoard;
-        String sharedBoardAsString = mBoardGenerator.boardToString(mBoardGenerator.generateMathModeBoard());
+        int[][] sharedBoard = mBoardGenerator.generateMathModeBoard();
+        mBoardGenerator.shuffleBoard(sharedBoard);
+        String sharedBoardAsString = mBoardGenerator.boardToString(sharedBoard);
+//        String sharedBoardAsString = mBoardGenerator.boardToString(mBoardGenerator.generateMathModeBoard());
         ((BaseApp) this.getApplicationContext()).opponentName = mBTDevice.getName();
         oppTempName = ((BaseApp) this.getApplicationContext()).opponentName;
         Log.d(TAG, "new activity: " +sharedBoardAsString);
@@ -539,8 +539,7 @@ public class BluetoothActivity extends AppCompatActivity{
                 gameStart += numberOfRounds;
                 gameStart += gameMode;
                 gameStart += sharedBoardAsString;
-     //           gameStart += ((BaseApp) this.getApplicationContext()).playerName;
-                gameStart += "Tyler";
+                gameStart += mBluetoothAdapter.getName();
                 Log.d(TAG, "new Activity: write out all: " +gameStart);
                 byte [] bytes =  gameStart.getBytes(Charset.defaultCharset());
                 ((BaseApp) this.getApplicationContext()).myBtConnection.write(bytes);
