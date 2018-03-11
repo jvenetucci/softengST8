@@ -3,7 +3,7 @@
     <string name="number_mode">Number Mode</string>
     <string name="math_mode">Math Mode</string>
     <string name="high_scores">High Scores</string>
-    <string name="number_high_score">Number Score</string>
+    <string name="number_high_score">Score</string>
     <string name="math_high_score">Math Score</string>
     <string name="solo">1 Player</string>
     <string name="comp">VS. AI</string>

@@ -1,7 +1,12 @@
 package com.example.cody.slidingtiles;
 
 
+import android.app.ActionBar;
 import android.util.Log;
+import android.view.View;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,9 +31,21 @@ public class DatabaseHandler {
     private int lowestScore;
     private int lowestScoreIndex;
 
+    TableLayout highScoreUIMath;
+
 
     // Constructor
     DatabaseHandler() {
+        databaseInstance = FirebaseDatabase.getInstance();
+        databaseRef = databaseInstance.getReference();
+        mathModeRef = databaseRef.child("MathMode");
+        queryTopFiveScores();
+        highScoreUIMath = null;
+    }
+
+    // Constructor for Highscores UI
+    DatabaseHandler(TableLayout table) {
+        highScoreUIMath = table;
         databaseInstance = FirebaseDatabase.getInstance();
         databaseRef = databaseInstance.getReference();
         mathModeRef = databaseRef.child("MathMode");
@@ -78,6 +95,11 @@ public class DatabaseHandler {
                     records[j] = null;
                 }
                 lowestScore = records[0].getScore();
+
+                if (highScoreUIMath != null) {
+                    mapScoresToUI();
+                }
+
             }
 
             @Override
@@ -162,4 +184,26 @@ public class DatabaseHandler {
 //        });
     }
 
+    public void updateHighScoreUI(TableLayout mathModeTable) {
+        highScoreUIMath = mathModeTable;
+//        mapScoresToUI();
+    }
+
+    private void mapScoresToUI() {
+        if (highScoreUIMath != null) {
+            TextView col;
+            TableRow row;
+            int i = 4;
+            while (records[i] == null) {
+                i--;
+            }
+            for (int j = 2; i >= 0; j++, i--) {
+                row = (TableRow) highScoreUIMath.getChildAt(j);
+                col = (TextView) row.getChildAt(0);
+                col.setText(records[i].getName());
+                col = (TextView) row.getChildAt(1);
+                col.setText(Integer.toString(records[i].getScore()));
+            }
+        }
+    }
 }
