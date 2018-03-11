@@ -343,7 +343,7 @@ public class MathMode2Player extends AppCompatActivity {
 
         int action = event.getAction();
 
-        // While the user's finger is on the screen, lets record their submission.
+        // While the user's finger is on the screen, lets Record their submission.
         // When the user lifts up their finger, that signals the end of their submission
         if (action == MotionEvent.ACTION_UP) {
             TextView submission = new TextView(this);

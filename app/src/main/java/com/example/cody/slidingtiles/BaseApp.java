@@ -4,6 +4,7 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**

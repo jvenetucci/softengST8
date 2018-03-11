@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,9 @@ public class MathMode extends AppCompatActivity {
 
     //Get from Base App
     private String playerName;
+    //Firebase stuff
+    DatabaseHandler db = new DatabaseHandler();
+    boolean highScoreReached = false;
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -112,6 +116,9 @@ public class MathMode extends AppCompatActivity {
                             validSubmission.addView(addDisplay,0);
                         }
 
+                        //Submit score
+                        db.pushToMathMode(playerName, currentScore);
+
                         closeButton1.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View view) {
                                 finish();
@@ -141,7 +148,7 @@ public class MathMode extends AppCompatActivity {
 
         //Create a 2-D array of the board
         tileMatrix = boardGen.generateMathModeBoard();
-        boardGen.shuffleBoard(tileMatrix);
+//        boardGen.shuffleBoard(tileMatrix);
         solutionList = new ArrayList<>();
 
         //Move the contents of the 2-D array to the UI
@@ -236,7 +243,7 @@ public class MathMode extends AppCompatActivity {
 
         int action = event.getAction();
 
-        // While the user's finger is on the screen, lets record their submission.
+        // While the user's finger is on the screen, lets Record their submission.
         // When the user lifts up their finger, that signals the end of their submission
         if (action == MotionEvent.ACTION_UP) {
             TextView submission = new TextView(this);
@@ -253,6 +260,10 @@ public class MathMode extends AppCompatActivity {
                 } else {
                     submission.setTextColor(Color.GREEN);
                     updateScore(score);
+                    if (!highScoreReached && db.checkForNewMathHighScore(currentScore)) {
+                        Toast.makeText(this, "New High Score!", Toast.LENGTH_LONG).show();
+                        highScoreReached = true;
+                    }
                     solutionList.add(equationHandler.getEquationString());
                 }
                 submission.setTextSize(20);
