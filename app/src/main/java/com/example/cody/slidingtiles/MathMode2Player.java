@@ -578,6 +578,7 @@ public class MathMode2Player extends AppCompatActivity {
     }
     //exit function called when the remote device sends the message to exit
     public void exitFunction() {
+        mPauseDialog.dismiss();
         finish();
         System.exit(0);
     }
