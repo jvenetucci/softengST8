@@ -34,6 +34,9 @@ import java.util.ArrayList;
 
 public class MathMode2Player extends AppCompatActivity {
     private final String TAG = "MathMode2Player";
+    //Firebase stuff
+    DatabaseHandler db = new DatabaseHandler();
+    boolean highScoreReached = false;
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -369,6 +372,10 @@ public class MathMode2Player extends AppCompatActivity {
                 submission.setBackgroundColor(Color.GRAY);
                 submission.setText(equationHandler.getEquationString());
                 submissionHistoryWindow.addView(submission, 0);
+                if (!highScoreReached && db.checkForNewMathHighScore(currentScore)) {
+                    Toast.makeText(this, "New High Score!", Toast.LENGTH_LONG).show();
+                    highScoreReached = true;
+                }
                 equationHandler.resetHandler();
             }
             return true;
@@ -503,6 +510,9 @@ public class MathMode2Player extends AppCompatActivity {
         }else if(opponentScore > currentScore){
             opponentWins++;
         }
+        //Submit score to DB
+        db.pushToMathMode(localPlayerName, currentScore);
+
         // Display the winner of the Round or Game if applicable
         TextView gameScores = mResultDialog.findViewById(R.id.win_lose);
         TextView gameWinner = mResultDialog.findViewById(R.id.matchResult);
