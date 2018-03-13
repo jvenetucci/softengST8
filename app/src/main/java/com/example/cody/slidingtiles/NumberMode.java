@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.TextView;
@@ -98,29 +99,6 @@ public class NumberMode extends AppCompatActivity {
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // -------------------------- inside dialog ---------------------------- //
-                        // custom dialog
-/*                        final Dialog dialog1 = new Dialog(context);
-                        dialog1.getWindow().setGravity(Gravity.CENTER);
-                        dialog1.setContentView(R.layout.popup1);
-                        dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                        dialog1.setCanceledOnTouchOutside(false);
-
-                        //dialog.setTitle("Title.");
-                        TextView scoreView = (TextView) dialog1.findViewById(R.id.player_score);
-                        TextView playerWin = (TextView) dialog1.findViewById(R.id.player_win) ;
-                        Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
-
-                        closeButton1.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View view) {
-                                finish();
-                                System.exit(0);
-
-                            }
-                        });
-
-                        dialog1.show();
-*/                        // -------------------------- inside dialog end---------------------------- //
                         finish();
                         System.exit(0);
                     }
@@ -183,7 +161,32 @@ public class NumberMode extends AppCompatActivity {
                     public void onClick(View v) {
                         moveTile(v);
                         if (isSolved(tileMatrix)) {
-                            Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            // -------------------------- popup after completing the game---------------------------- //
+                            // custom dialog
+                            Dialog dialog1 = new Dialog(context);
+                            dialog1.getWindow().setGravity(Gravity.CENTER);
+                            dialog1.setContentView(R.layout.you_win);
+                            dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                            dialog1.setCanceledOnTouchOutside(false);
+
+                            //dialog.setTitle("Title.");
+                            //TextView playerID = (TextView) dialog1.findViewById(R.id.player_name) ;
+                            //playerID.setText(playerName);
+                            TextView gameScore = (TextView) dialog1.findViewById(R.id.you_win);
+                            //gameScore.setText("Your Win ");
+                            Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
+
+                            closeButton1.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    finish();
+                                    System.exit(0);
+
+                                }
+                            });
+
+                            dialog1.show();
+                            // -------------------------- inside dialog end---------------------------- //
                         }
                     }
                 });
