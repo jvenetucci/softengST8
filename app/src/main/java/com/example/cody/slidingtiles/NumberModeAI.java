@@ -30,7 +30,7 @@ public class NumberModeAI extends AppCompatActivity {
     float yTileDistance = 0;
     int emptyTileRowIndex;
     int emptyTileColIndex;
-    private HashMap<Integer, Button> AIBoardMap = new HashMap<>();
+    public HashMap<Integer, Button> AIBoardMap = new HashMap<>();
 
 
     // Timer variables
@@ -126,6 +126,7 @@ public class NumberModeAI extends AppCompatActivity {
         displayBoardMatrixUI(board);
         AIboard = findViewById(R.id.AIboard);
         displayAIBoardMatrixUI(AIboard);
+        moveAITile(1);
     }
 
     // Timer code
@@ -159,6 +160,7 @@ public class NumberModeAI extends AppCompatActivity {
                 } else {
                     tile.setText(Integer.toString(tileMatrix[i][j]));
                 }
+
                 tile.setOnClickListener(new View.OnClickListener() { //Tie the moveTile method to onclick
                     @Override
                     public void onClick(View v) {
@@ -211,16 +213,18 @@ public class NumberModeAI extends AppCompatActivity {
                 } else {
                     tile.setText(Integer.toString(number));
                 }
-                //number = determineAiMove();
-                //moveAITile(5);
+                //tile.setX(findViewById());
                 AIBoardMap.put(number, tile);
+
                 tileCount ++;
             }
         }
+        //Piece move = determineAiMove();
+        //moveAITile(move);
     }
 
     //
-    protected int determineAiMove() {
+    protected Piece determineAiMove() {
         AiState initial = new AiState();
         PriorityQueue<AiState> frontier = new PriorityQueue<>();
         Piece[] move = new Piece[4];
@@ -234,7 +238,7 @@ public class NumberModeAI extends AppCompatActivity {
         initial.evaluate();
         frontier.add(initial);
 
-        while(count < 2) {
+        while(count < 1) {
             if(frontier.peek() == null) {
                 System.out.println("Empty List");
                 break;
@@ -248,6 +252,9 @@ public class NumberModeAI extends AppCompatActivity {
             //}
 
             move = initial.determineActions();
+
+            //TEST
+            //moveAITile(move[0]);
 
             for(int i = 0; i < initial.numActions; ++i) {
                 AiState child = new AiState();
@@ -263,9 +270,9 @@ public class NumberModeAI extends AppCompatActivity {
             ++count;
         }
 
-        int result = initial.solution();
+        //AITileMatrix = initial.solution();
 
-        return result;
+        return move[0];
     }
 
     // Function that determines how far apart tile are.
@@ -322,14 +329,33 @@ public class NumberModeAI extends AppCompatActivity {
     // Manipulates the AIBoard in the UI
     // Swaps the tile with the number 'tileNumber' with the empty tile
     public void moveAITile(int tileNumber){
+    //public void moveAITile(Piece action) {
+
         //Do Something
+
+        //if(AIBoardMap.containsKey(AITileMatrix[action.row][action.col]))
+        //    System.out.println("TILE FOUND");
+        //else
+        //    System.out.println("TILE NOT FOUND");
+
         Button emptyTile = AIBoardMap.get(-1);
         Button tile = AIBoardMap.get(tileNumber);
+        //Button tile = findViewById(R.id.AIbutton1);
+        //Button emptyTile = findViewById(R.id.AIbutton25);
+        //if(tile == null)
+        //    System.out.println("TILE NULL");
+        //Button tile = AIBoardMap.get(AITileMatrix[action.row][action.col]);
 
-        float currentX = tile.getX();
-        float currentY = tile.getY();
+        //System.out.println("TILE NUMBER: " + AITileMatrix[action.row][action.col]);
+        int [] coord = new int[2];
+        tile.getLocationInWindow(coord);
+
+        float currentX = coord[0];
+        float currentY = coord[1];
         float emptyY = emptyTile.getY();
         float emptyX = emptyTile.getX();
+
+        //swap(AITileMatrix, action.row, action.col, action.emptyRow, action.emptyCol);
 
         //Code that moves the Tiles
         tile.animate().x(emptyX).y(emptyY);

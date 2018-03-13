@@ -13,7 +13,6 @@ public class AiState implements Comparable<AiState> {
     public int[][] board = new int[5][5];
     public int blanki;
     public int blankj;
-    public int moveNum;
     public int numActions;
 
     //Constructor
@@ -29,7 +28,6 @@ public class AiState implements Comparable<AiState> {
         this.eval = 0;
         this.blanki = -1;
         this.blankj = -1;
-        this.moveNum = -1;
         this.numActions = 0;
     }
 
@@ -127,7 +125,6 @@ public class AiState implements Comparable<AiState> {
         this.cost = toCopy.cost;
         this.depth = toCopy.depth;
         this.eval = toCopy.eval;
-        this.moveNum = toCopy.moveNum;
         this.numActions = toCopy.numActions;
     }
 
@@ -236,6 +233,12 @@ public class AiState implements Comparable<AiState> {
                 move[3].setCol(blankj);
             }
         }
+
+        for(int i = 0; i < numActions; ++i) {
+            move[i].setEmptyRow(blanki);
+            move[i].setEmptyCol(blankj);
+        }
+
         return move;
     }
 
@@ -251,7 +254,6 @@ public class AiState implements Comparable<AiState> {
         //set new blank row for child
         blanki = newRow;
         blankj = newCol;
-        moveNum = temp;
 
         //capture depth for A*
         depth = depth + 1;
@@ -404,14 +406,16 @@ public class AiState implements Comparable<AiState> {
     }
 
     //
-    public int solution() {
-        AiState grab = getParent();
+    public int [][] solution() {
+        AiState grab = this;
+        AiState current = this;
 
-        while(grab.getParent() != null) {
+        while(grab != null && grab.getParent() != null) {
+            current = grab;
             grab = grab.getParent();
         }
 
-        return grab.moveNum;
+        return current.board;
     }
 
 

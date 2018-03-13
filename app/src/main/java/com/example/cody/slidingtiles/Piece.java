@@ -7,6 +7,8 @@ package com.example.cody.slidingtiles;
 public class Piece {
     public int row;
     public int col;
+    public int emptyRow;
+    public int emptyCol;
 
     public int getRow() {
         return row;
@@ -20,4 +22,8 @@ public class Piece {
     public void setCol(int col) {
         this.col = col;
     }
+    public int getEmptyRow() {return emptyRow;}
+    public int getEmptyCol() {return emptyCol;}
+    public void setEmptyRow(int emptyRow) {this.emptyRow = emptyRow;}
+    public void setEmptyCol(int emptyCol) {this.emptyCol = emptyCol;}
 }
