@@ -49,6 +49,7 @@
     <string name="game_win">Game Win</string>
     <string name="win_count">win_count</string>
     <string name="string_win_count">0 : 0</string>
+    <string name="win">You Win</string>
     <string-array name="roundsToPlay">
         <item> 1 </item>
         <item> 3 </item>

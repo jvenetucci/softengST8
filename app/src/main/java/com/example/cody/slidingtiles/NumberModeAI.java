@@ -98,29 +98,6 @@ public class NumberModeAI extends AppCompatActivity {
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // -------------------------- inside dialog ---------------------------- //
-                        // custom dialog
-/*                        final Dialog dialog1 = new Dialog(context);
-                        dialog1.getWindow().setGravity(Gravity.CENTER);
-                        dialog1.setContentView(R.layout.popup1);
-                        dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                        dialog1.setCanceledOnTouchOutside(false);
-
-                        //dialog.setTitle("Title.");
-                        TextView scoreView = (TextView) dialog1.findViewById(R.id.player_score);
-                        TextView playerWin = (TextView) dialog1.findViewById(R.id.player_win) ;
-                        Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
-
-                        closeButton1.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View view) {
-                                finish();
-                                System.exit(0);
-
-                            }
-                        });
-
-                        dialog1.show();
- */                       // -------------------------- inside dialog end---------------------------- /
                         finish();
                         System.exit(0);
                     }
@@ -186,7 +163,29 @@ public class NumberModeAI extends AppCompatActivity {
                     public void onClick(View v) {
                         moveTile(v);
                         if (isSolved(tileMatrix)) {
-                            Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            // -------------------------- popup after completing the game---------------------------- //
+
+                            Dialog dialog1 = new Dialog(context);
+                            dialog1.getWindow().setGravity(Gravity.CENTER);
+                            dialog1.setContentView(R.layout.you_win);
+                            dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                            dialog1.setCanceledOnTouchOutside(false);
+
+                            TextView gameScore = (TextView) dialog1.findViewById(R.id.you_win);
+                            //gameScore.setText("Your Win ");
+                            Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
+
+                            closeButton1.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    finish();
+                                    System.exit(0);
+
+                                }
+                            });
+
+                            dialog1.show();
+                            // -------------------------- inside dialog end---------------------------- //
                         }
                     }
                 });
@@ -312,6 +311,9 @@ public class NumberModeAI extends AppCompatActivity {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 if (i == 4 && j ==4) { // If we made it to the bottom right corner, its solved!
+                    // Stop the timer
+                    timeSwapBuff += timeInMilliseconds;
+                    customHandler.removeCallbacks(updateTimerThread);
                     return true;
                 }
                 if (boardMatrix[i][j] != currentCount) {
