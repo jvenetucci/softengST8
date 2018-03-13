@@ -136,6 +136,120 @@ class BoardGenerator {
         return tileMatrix;
     }
 
+    int [][] generateEasyMathBoard() {
+        int [][] tileMatrix = new int[5][5];
+        Random tileGenerator = new Random();
+        tileGenerator.setSeed(System.currentTimeMillis());
+        int numberBound = 0;
+        int curNum;
+        int divisionCase;
+        int divisionFlag;
+
+        for (int i =0; i <5; i++) {
+            divisionFlag = 0;
+            if( i == 4){
+                for (int k = 0; k < 4; k++){
+                    tileMatrix[i][k] = tileGenerator.nextInt(10);
+                }
+            }
+            else{
+                tileMatrix[i][0] = tileGenerator.nextInt(10);
+                curNum = tileMatrix[i][0];
+                tileMatrix[i][1] = 11 + tileGenerator.nextInt(4);
+
+                switch (tileMatrix[i][1]) {
+                    case 11: // add
+                        numberBound = 10 - curNum;
+                        break;
+                    case 12: // subtract
+                        while(tileMatrix[i][0] == 0){
+                            tileMatrix[i][0] = tileGenerator.nextInt(10);
+                        }
+                        curNum = tileMatrix[i][0];
+                        numberBound = curNum + 1;
+                        break;
+                    case 13: // multiply
+                        if (curNum > 4) {
+                            numberBound = 1;
+                        } else if (curNum == 4) {
+                            numberBound = 2;
+                        } else if (curNum == 3) {
+                            numberBound = 3;
+                        } else if (curNum == 2) {
+                            numberBound = 4;
+                        } else if (curNum < 2) {
+                            numberBound = 10;
+                        }
+                        break;
+                    case 14: //divide
+                        divisionFlag = 1;
+                        if (curNum == 0) {
+                            while(tileMatrix[i][0] == 0){
+                                tileMatrix[i][0] = tileGenerator.nextInt(10);
+                            }
+                            curNum = tileMatrix[i][0];
+                        }
+                        if (curNum == 9) {
+                            divisionCase = tileGenerator.nextInt(3);
+                            if (divisionCase == 0) {
+                                tileMatrix[i][2] = 1;
+                            } else if (divisionCase == 1) {
+                                tileMatrix[i][2] = 3;
+                            } else if (divisionCase == 2) {
+                                tileMatrix[i][2] = 9;
+                            }
+                        } else if (curNum % 2 == 0) {
+                            divisionCase = tileGenerator.nextInt(4);
+                            if (divisionCase == 0) {
+                                tileMatrix[i][2] = 1;
+                            } else if (divisionCase == 1) {
+                                tileMatrix[i][2] = 2;
+                            } else if (divisionCase == 2) {
+                                tileMatrix[i][2] = curNum;
+                            } else if (divisionCase == 3) {
+                                tileMatrix[i][2] = curNum / 2;
+                            }
+                        } else {
+                            divisionCase = tileGenerator.nextInt(2);
+                            if (divisionCase == 0) {
+                                tileMatrix[i][2] = 1;
+                            } else if (divisionCase == 1) {
+                                tileMatrix[i][2] = curNum;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if (divisionFlag == 0) {
+                    tileMatrix[i][2] = tileGenerator.nextInt(numberBound);
+                }
+                tileMatrix[i][3] = 10;
+                switch (tileMatrix[i][1]) {
+                    case 11:
+                        tileMatrix[i][4] = tileMatrix[i][0] + tileMatrix[i][2];
+                        break;
+                    case 12:
+                        tileMatrix[i][4] = tileMatrix[i][0] - tileMatrix[i][2];
+                        break;
+                    case 13:
+                        tileMatrix[i][4] = tileMatrix[i][0] * tileMatrix[i][2];
+                        break;
+                    case 14:
+                        //tileMatrix[i][4] = 99;
+                        tileMatrix[i][4] = tileMatrix[i][0] / tileMatrix[i][2];
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+        }
+        tileMatrix[4][4] = -1; //Set the empty tile.
+        return tileMatrix;
+    }
+
     // Returns a 5x5 matrix that represents a Number Mode Board
     // The board is generated in a random order that is solvable
     int [][] generateNumberModeBoard() {

@@ -34,6 +34,9 @@ import java.util.ArrayList;
 
 public class MathMode2Player extends AppCompatActivity {
     private final String TAG = "MathMode2Player";
+    //Firebase stuff
+    DatabaseHandler db = new DatabaseHandler();
+    boolean highScoreReached = false;
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -343,7 +346,7 @@ public class MathMode2Player extends AppCompatActivity {
 
         int action = event.getAction();
 
-        // While the user's finger is on the screen, lets record their submission.
+        // While the user's finger is on the screen, lets Record their submission.
         // When the user lifts up their finger, that signals the end of their submission
         if (action == MotionEvent.ACTION_UP) {
             TextView submission = new TextView(this);
@@ -369,6 +372,10 @@ public class MathMode2Player extends AppCompatActivity {
                 submission.setBackgroundColor(Color.GRAY);
                 submission.setText(equationHandler.getEquationString());
                 submissionHistoryWindow.addView(submission, 0);
+                if (!highScoreReached && db.checkForNewMathHighScore(currentScore)) {
+                    Toast.makeText(this, "New High Score!", Toast.LENGTH_LONG).show();
+                    highScoreReached = true;
+                }
                 equationHandler.resetHandler();
             }
             return true;
@@ -503,6 +510,9 @@ public class MathMode2Player extends AppCompatActivity {
         }else if(opponentScore > currentScore){
             opponentWins++;
         }
+        //Submit score to DB
+        db.pushToMathMode(localPlayerName, currentScore);
+
         // Display the winner of the Round or Game if applicable
         TextView gameScores = mResultDialog.findViewById(R.id.win_lose);
         TextView gameWinner = mResultDialog.findViewById(R.id.matchResult);
@@ -578,6 +588,7 @@ public class MathMode2Player extends AppCompatActivity {
     }
     //exit function called when the remote device sends the message to exit
     public void exitFunction() {
+        mPauseDialog.dismiss();
         finish();
         System.exit(0);
     }

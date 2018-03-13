@@ -3,7 +3,7 @@
     <string name="number_mode">Number Mode</string>
     <string name="math_mode">Math Mode</string>
     <string name="high_scores">High Scores</string>
-    <string name="number_high_score">Number Score</string>
+    <string name="number_high_score">Score</string>
     <string name="math_high_score">Math Score</string>
     <string name="solo">1 Player</string>
     <string name="comp">VS. AI</string>
@@ -30,7 +30,7 @@
     <string name="togglebutton">ToggleButton</string>
     <string name="cuttthroat">Cuttthroat</string>
     <string name="basic">Basic</string>
-    <string name="welcome">Welcome to sliding Tiles</string>
+    <string name="welcome">Welcome To Sliding Tiles</string>
     <string name="Key_Name">Name</string>
     <string name="submit">Submit</string>
     <string name="editText_main">Enter your name here</string>

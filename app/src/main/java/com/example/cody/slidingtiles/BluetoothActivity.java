@@ -205,6 +205,7 @@ public class BluetoothActivity extends AppCompatActivity{
         Log.d (TAG, "our device name is..: " + mBluetoothAdapter.getName());
         if(((BaseApp)this.getApplicationContext()).playerName.compareTo("Player 1") != 0) {
             mBluetoothAdapter.setName(((BaseApp) this.getApplicationContext()).playerName);
+            Log.d (TAG, "Changed our device name to..: " + mBluetoothAdapter.getName());
         }
         //Broadcasts when bond state changes (ie:pairing)
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -383,7 +384,11 @@ public class BluetoothActivity extends AppCompatActivity{
     //ENABLE_DISCOVERY BUTTON
     public void btnEnableDisable_Discoverable(View view) {
         Log.d(TAG, "btnEnableDisable_Discoverable: Making device discoverable for 300 seconds.");
-
+        //Ensure our name has been updated
+        if(((BaseApp)this.getApplicationContext()).playerName.compareTo("Player 1") != 0) {
+            mBluetoothAdapter.setName(((BaseApp) this.getApplicationContext()).playerName);
+            Log.d (TAG, "Changed our device name to..: " + mBluetoothAdapter.getName());
+        }
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
@@ -398,7 +403,11 @@ public class BluetoothActivity extends AppCompatActivity{
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void btnDiscover(View view) {
         Log.d(TAG, "btnDiscover: Looking for unpaired devices.");
-       // refreshViews();
+        //Ensure our name has been updated
+        if(((BaseApp)this.getApplicationContext()).playerName.compareTo("Player 1") != 0) {
+            mBluetoothAdapter.setName(((BaseApp) this.getApplicationContext()).playerName);
+            Log.d (TAG, "Changed our device name to..: " + mBluetoothAdapter.getName());
+        }
         if(mBluetoothAdapter.isDiscovering()){
             mBluetoothAdapter.cancelDiscovery();
             Log.d(TAG, "btnDiscover: Canceling discovery.");
