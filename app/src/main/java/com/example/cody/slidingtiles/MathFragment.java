@@ -37,7 +37,7 @@ public class MathFragment extends Fragment{
         btnMulti.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(),MathMode.class);
+                Intent intent = new Intent(getActivity(),BluetoothActivity.class);
                 startActivity(intent);
             }
         });
