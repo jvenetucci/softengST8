@@ -33,7 +33,12 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mBTDevice;
     public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
+//    public ArrayList<BluetoothDevice> mBTDevicesPaired = new ArrayList<>();
+//    public ArrayList<BluetoothDevice> mBTDevicesUnpaired = new ArrayList<>();
+
+
     public DeviceListAdapter mDeviceListAdapter;
+
     ListView lvNewDevices;
     ListView bondedDevices;
 
@@ -119,18 +124,19 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                 if(!mBTDevices.contains(device)) {
                     mBTDevices.add(device);
                 }
-                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + " :: " +device.getBondState());
 
-                if(device.getBondState() == BluetoothDevice.BOND_NONE) {
-                    Log.d(TAG, "onReceive: new device..");
-                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
-                    lvNewDevices.setAdapter(mDeviceListAdapter);
-                }
+                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + " :: " +device.getBondState());
                 if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "onReceive: bonded dev");
                     mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
                     bondedDevices.setAdapter(mDeviceListAdapter);
                 }
+                if(device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(TAG, "onReceive: new device..");
+                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
+                    lvNewDevices.setAdapter(mDeviceListAdapter);
+                }
+
             }
         }
     };
@@ -151,7 +157,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
                     //inside BroadcastReceiver4
                     mBTDevice = mDevice;
-                    refreshViews();
+                    //refreshViews();
                     startConnection();
                 }
                 //case2: creating a bone
@@ -176,6 +182,8 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
         lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
         bondedDevices = (ListView) findViewById(R.id.bondedDevices);
         mBTDevices = new ArrayList<>();
+//        mBTDevicesPaired = new ArrayList<>();
+//        mBTDevicesUnpaired = new ArrayList<>();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         //Broadcasts when bond state changes (ie:pairing)
@@ -262,7 +270,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void btnDiscover(View view) {
         Log.d(TAG, "btnDiscover: Looking for unpaired devices.");
-        refreshViews();
+        //refreshViews();
         if(mBluetoothAdapter.isDiscovering()){
             mBluetoothAdapter.cancelDiscovery();
             Log.d(TAG, "btnDiscover: Canceling discovery.");
@@ -312,7 +320,6 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //first cancel discovery because its very memory intensive.
         mBluetoothAdapter.cancelDiscovery();
-
         Log.d(TAG, "onItemClick: You Clicked on a device.");
         String deviceName = mBTDevices.get(i).getName();
         String deviceAddress = mBTDevices.get(i).getAddress();
@@ -440,7 +447,7 @@ public class BluetoothActivity extends AppCompatActivity implements AdapterView.
                     mDeviceListAdapter = new DeviceListAdapter(this, R.layout.device_adapter_view, mBTDevices);
                     bondedDevices.setAdapter(mDeviceListAdapter);
                 }
-                if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                else if (device.getBondState() == BluetoothDevice.BOND_NONE) {
                     Log.d(TAG, "refreshViews: not bonded");
                     mDeviceListAdapter = new DeviceListAdapter(this, R.layout.device_adapter_view, mBTDevices);
                     lvNewDevices.setAdapter(mDeviceListAdapter);
