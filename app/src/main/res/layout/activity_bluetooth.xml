@@ -16,13 +16,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:onClick="btnEnableDisable_Discoverable"
         android:text="@string/enable_discoverable"
         app:layout_constraintBottom_toBottomOf="@+id/btnFindUnpairedDevices"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnFindUnpairedDevices"
-        app:layout_constraintVertical_bias="1.0" android:layout_marginStart="16dp" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btnFindUnpairedDevices"
@@ -37,18 +38,46 @@
         app:layout_constraintStart_toEndOf="@+id/btnDiscoverable_on_off"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/numRounds"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/number_of_rounds"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDiscoverable_on_off"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="16dp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="48dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/background_light"
+        app:layout_constraintBottom_toBottomOf="@+id/numRounds"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/numRounds"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginEnd="24dp" />
+
     <Button
         android:id="@+id/newAct"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
         android:onClick="newActivity"
         android:text="@string/start_game"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnDiscoverable_on_off" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toggleButton" />
 
 
     <TextView
@@ -57,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/paired_devices"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -71,7 +100,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -85,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/unpaired_devices"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -101,13 +130,33 @@
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/unbonded" />
+        app:layout_constraintTop_toBottomOf="@+id/unbonded">
+
+    </ListView>
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:checked="true"
+        android:text="@string/togglebutton"
+        android:textOff="@string/cuttthroat"
+        android:textOn="@string/basic"
+        app:layout_constraintEnd_toStartOf="@+id/newAct"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numRounds"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="16dp" />
 
 
 </android.support.constraint.ConstraintLayout>

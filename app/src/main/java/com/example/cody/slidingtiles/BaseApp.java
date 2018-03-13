@@ -4,6 +4,7 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -18,12 +19,16 @@ public class BaseApp extends Application{
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     BluetoothAdapter mBluetoothAdapter;
     public BluetoothConnectionService myBtConnection;
+    public String playerName = "Player 1";
+    public String opponentName = "Player 2";
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "in APP: OnCreate");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        myBtConnection = new BluetoothConnectionService(this);
+        if (mBluetoothAdapter != null) {
+            myBtConnection = new BluetoothConnectionService(this);
+        }
     }
 }

@@ -16,21 +16,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_margin="20dp">
-            <Button
-                android:id="@+id/resume"
+            <TextView
+                android:id="@+id/player_score"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Resume" />
+                android:text="Your Score is" />
+            <TextView
+                android:id="@+id/player_win"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Player win" />
             <Button
-                android:id="@+id/exit"
+                android:id="@+id/exit1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Exit" />
-            <!--<Button-->
-                <!--android:id="@+id/highscore"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="High Score" />-->
+
         </LinearLayout>
     </LinearLayout>
 

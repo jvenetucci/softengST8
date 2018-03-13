@@ -6,44 +6,356 @@
     android:layout_height="match_parent"
     tools:context="com.example.cody.slidingtiles.HighScores">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/high_scores"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <TableLayout
 
-    <EditText
-        android:id="@+id/editText3"
-        android:layout_width="150dp"
+        android:id="@+id/mathModeTable"
+        android:layout_width="367dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="60dp"
-        android:ems="10"
-        android:inputType="none"
-        android:text="@string/number_high_score"
-        android:textAlignment="center"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/editText4"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="60dp"
-        android:ems="10"
-        android:inputType="none"
-        android:text="@string/math_high_score"
-        android:textAlignment="center"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/Math_Mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:text="@string/Math_mode"
+            android:textAlignment="center"
+            android:textSize="40sp" />
+
+
+        <TableRow
+            android:id="@+id/nrow1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/ntextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/Player_name"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/ntextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/number_high_score"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/nrow2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/ntextView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/ntextView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/nrow3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/ntextView31"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/ntextView32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/nrow4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/ntextView41"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/ntextView42"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/nrow5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/ntextView51"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/ntextView52"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/nrow6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/ntextView61"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/ntextView62"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center" />
+
+        </TableRow>
+    </TableLayout>
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:text="@string/high_scores"-->
+        <!--android:textAlignment="center"-->
+        <!--android:textSize="24sp"-->
+        <!--android:textStyle="bold"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/Number_score"-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:layout_marginTop="60dp"-->
+        <!--android:textAlignment="center"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/Math_score"-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="24dp"-->
+        <!--android:layout_marginTop="60dp"-->
+        <!--android:textAlignment="center"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+    <!--<TableLayout-->
+        <!--android:layout_width="368dp"-->
+        <!--android:layout_height="221dp"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="1.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/Num_Mode"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/Number_mode"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="40sp" />-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row1"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:weightSum="6">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:text="@string/Player_name"-->
+                <!--android:textAlignment="center"-->
+                <!--android:textSize="20sp"/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView2"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:text="@string/math_high_score"-->
+                <!--android:textAlignment="center"-->
+                <!--android:textSize="20sp"/>-->
+
+        <!--</TableRow>-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:weightSum="6">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView21"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView22"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+        <!--</TableRow>-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row3"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:weightSum="6">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView31"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView32"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+        <!--</TableRow>-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row4"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:weightSum="6">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView41"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView42"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+        <!--</TableRow>-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row5"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:weightSum="6">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView51"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView52"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+        <!--</TableRow>-->
+
+        <!--<TableRow-->
+            <!--android:id="@+id/row6"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:weightSum="6">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView61"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView62"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textAlignment="center" />-->
+
+        <!--</TableRow>-->
+    <!--</TableLayout>-->
+
 </android.support.constraint.ConstraintLayout>

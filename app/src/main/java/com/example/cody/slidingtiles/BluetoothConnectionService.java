@@ -313,9 +313,14 @@ public class BluetoothConnectionService {
         ConnectedThread r;
 
         // Synchronize a copy of the ConnectedThread
+        synchronized (this) {
+            if (mState != CONNECTED) return;
+            r = mConnectedThread;
+        }
         Log.d(TAG, "write: Write Called.");
         //perform the write
-        mConnectedThread.write(out);
+        //mConnectedThread.write(out);
+        r.write(out);
     }
 
     public boolean getState(){
