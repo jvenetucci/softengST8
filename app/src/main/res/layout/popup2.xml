@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
     android:orientation="vertical"
     android:background="@android:color/background_light">
     <LinearLayout
@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:layout_margin="1dp"
         android:background="@android:color/darker_gray">
-
+        >
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -20,17 +20,18 @@
                 android:id="@+id/resume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Resume" />
+                android:text="@string/resume" />
+            <Button
+                android:id="@+id/nextRound"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/next_round" />
             <Button
                 android:id="@+id/exit"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Exit" />
-            <!--<Button-->
-                <!--android:id="@+id/highscore"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="High Score" />-->
+                android:text="@string/exit" />
+
         </LinearLayout>
     </LinearLayout>
 

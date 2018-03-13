@@ -1,6 +1,8 @@
 package com.example.cody.slidingtiles;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.constraint.ConstraintLayout;
@@ -41,6 +43,7 @@ public class NumberModeAI extends AppCompatActivity {
     long updatedTime = 0L;
 
     //Popup window
+    final Context context = this;
     private Context mContext;
     private PopupWindow mPopupWindow;
     private ConstraintLayout mRelativeLayout,back_dim_layout;
@@ -79,21 +82,18 @@ public class NumberModeAI extends AppCompatActivity {
                 customHandler.removeCallbacks(updateTimerThread);
 
 
-                //popup
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-                View customView = inflater.inflate(R.layout.popup,null);
-                mPopupWindow = new PopupWindow(
-                        customView,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                );
-//
-               mPopupWindow.setTouchable(true);
-                mPopupWindow.setFocusable(true);
-                mPopupWindow.setOutsideTouchable(false);
-                Button resumeButton = (Button) customView.findViewById(R.id.resume);
-                Button closeButton = (Button) customView.findViewById(R.id.exit);
-                Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+                // -------------------------- dialouge popup -------------------------//
+                // custom dialog
+                final Dialog dialog = new Dialog(context);
+                dialog.getWindow().setGravity(Gravity.CENTER);
+                dialog.setContentView(R.layout.popup);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                dialog.setCanceledOnTouchOutside(false);
+
+                //dialog.setTitle("Title.");
+
+                Button resumeButton = (Button) dialog.findViewById(R.id.resume);
+                Button closeButton = (Button) dialog.findViewById(R.id.exit);
 
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -106,12 +106,13 @@ public class NumberModeAI extends AppCompatActivity {
                     public void onClick(View view) {
                         startTime = SystemClock.uptimeMillis();
                         customHandler.postDelayed(updateTimerThread, 0);
-                        mPopupWindow.dismiss();
+                        dialog.dismiss();
+
                     }
                 });
-                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
 
-
+                dialog.show();
+                // -------------------------- dialogue popup end ---------------------//
             }
         });
 
@@ -162,7 +163,29 @@ public class NumberModeAI extends AppCompatActivity {
                     public void onClick(View v) {
                         moveTile(v);
                         if (isSolved(tileMatrix)) {
-                            Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            // -------------------------- popup after completing the game---------------------------- //
+
+                            Dialog dialog1 = new Dialog(context);
+                            dialog1.getWindow().setGravity(Gravity.CENTER);
+                            dialog1.setContentView(R.layout.you_win);
+                            dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                            dialog1.setCanceledOnTouchOutside(false);
+
+                            TextView gameScore = (TextView) dialog1.findViewById(R.id.you_win);
+                            //gameScore.setText("Your Win ");
+                            Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
+
+                            closeButton1.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    finish();
+                                    System.exit(0);
+
+                                }
+                            });
+
+                            dialog1.show();
+                            // -------------------------- inside dialog end---------------------------- //
                         }
                     }
                 });
@@ -288,6 +311,9 @@ public class NumberModeAI extends AppCompatActivity {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 if (i == 4 && j ==4) { // If we made it to the bottom right corner, its solved!
+                    // Stop the timer
+                    timeSwapBuff += timeInMilliseconds;
+                    customHandler.removeCallbacks(updateTimerThread);
                     return true;
                 }
                 if (boardMatrix[i][j] != currentCount) {

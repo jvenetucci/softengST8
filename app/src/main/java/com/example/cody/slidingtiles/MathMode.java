@@ -1,25 +1,33 @@
 package com.example.cody.slidingtiles;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.support.constraint.ConstraintLayout;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.PopupWindow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MathMode extends AppCompatActivity {
 
+    //Get from Base App
+    private String playerName;
+    //Firebase stuff
+    DatabaseHandler db = new DatabaseHandler();
+    boolean highScoreReached = false;
     //Board Resources
     int tileMatrix[][] = new int [5][5];
     float xTileDistance = 0;
@@ -28,6 +36,7 @@ public class MathMode extends AppCompatActivity {
     private float xSubmittedTile;
     private int axisLock;   // 1 = Vertical solution; 2 = Horizontal solution
     int currentScore = 0;
+    private ArrayList<String> solutionList;
 
     //UI Elements
     Button emptyTileButton;
@@ -45,9 +54,7 @@ public class MathMode extends AppCompatActivity {
     long updatedTime = 0L;
 
     //Popup window
-    private Context mContext;
-    private PopupWindow mPopupWindow;
-    private ConstraintLayout mRelativeLayout;
+    final Context context = this;
 
     //Helper Classes
     MathSolutionHandler equationHandler = new MathSolutionHandler();
@@ -59,11 +66,8 @@ public class MathMode extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_math_mode);
 
-        //Popup
-        mContext = getApplicationContext();
-        mRelativeLayout = (ConstraintLayout) findViewById(R.id.rl);
-
-
+        // Get player name
+        playerName = ((BaseApp)this.getApplicationContext()).playerName;
         // Timer implementation
         timerValue = (TextView) findViewById(R.id.timerValue);
         startTime = SystemClock.uptimeMillis();
@@ -76,46 +80,76 @@ public class MathMode extends AppCompatActivity {
                 customHandler.removeCallbacks(updateTimerThread);
 
 
-                //popup
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-                View customView = inflater.inflate(R.layout.popup,null);
-                mPopupWindow = new PopupWindow(
-                        customView,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                );
-                mPopupWindow.setTouchable(true);
-                mPopupWindow.setFocusable(true);
-                mPopupWindow.setOutsideTouchable(false);
+                // -------------------------- dialouge popup -------------------------//
+                // custom dialog
+                final Dialog dialog = new Dialog(context);
+                dialog.getWindow().setGravity(Gravity.CENTER);
+                dialog.setContentView(R.layout.popup);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                dialog.setCanceledOnTouchOutside(false);
 
-                Button resumeButton = (Button) customView.findViewById(R.id.resume);
-                Button closeButton = (Button) customView.findViewById(R.id.exit);
-                Button highscoreButton = (Button) customView.findViewById(R.id.highscore);
+
+                Button resumeButton = (Button) dialog.findViewById(R.id.resume);
+                Button closeButton = (Button) dialog.findViewById(R.id.exit);
 
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        finish();
-                        System.exit(0);
+                        // -------------------------- inside dialog ---------------------------- //
+                        // custom dialog
+                        Dialog dialog1 = new Dialog(context);
+                        dialog1.getWindow().setGravity(Gravity.CENTER);
+                        dialog1.setContentView(R.layout.popup_player_score);
+                        dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        dialog1.setCanceledOnTouchOutside(false);
+
+                        //dialog.setTitle("Title.");
+                        TextView playerID = (TextView) dialog1.findViewById(R.id.player_name) ;
+                        playerID.setText(playerName);
+                        TextView gameScore = (TextView) dialog1.findViewById(R.id.player_score);
+                        gameScore.setText("Your Score: " + currentScore);
+                        Button closeButton1 = (Button) dialog1.findViewById(R.id.exit1 );
+                        LinearLayout validSubmission = dialog1.findViewById(R.id.validSubmissionHistory);
+                        for(String equation : solutionList){
+                            TextView addDisplay = new TextView(context);
+                            addDisplay.setText(equation);
+                            validSubmission.addView(addDisplay,0);
+                        }
+
+                        //Submit score
+                        db.pushToMathMode(playerName, currentScore);
+
+                        closeButton1.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View view) {
+                                finish();
+                                System.exit(0);
+
+                            }
+                        });
+
+                        dialog1.show();
+                        // -------------------------- inside dialog end---------------------------- //
+
                     }
                 });
                 resumeButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         startTime = SystemClock.uptimeMillis();
                         customHandler.postDelayed(updateTimerThread, 0);
-                        mPopupWindow.dismiss();
+                        dialog.dismiss();
+
                     }
                 });
-                //customView.getWindowToken();
-                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
 
-
+                dialog.show();
+                // -------------------------- dialogue popup end ---------------------//
             }
         });
 
         //Create a 2-D array of the board
         tileMatrix = boardGen.generateMathModeBoard();
-//        shuffleBoard(tileMatrix);
+//        boardGen.shuffleBoard(tileMatrix);
+        solutionList = new ArrayList<>();
 
         //Move the contents of the 2-D array to the UI
         board = findViewById(R.id.board);
@@ -209,21 +243,28 @@ public class MathMode extends AppCompatActivity {
 
         int action = event.getAction();
 
-        // While the user's finger is on the screen, lets record their submission.
+        // While the user's finger is on the screen, lets Record their submission.
         // When the user lifts up their finger, that signals the end of their submission
         if (action == MotionEvent.ACTION_UP) {
             TextView submission = new TextView(this);
             if (equationHandler.getCountOfSubmittedTiles() != 0) {
                 int score = equationHandler.solve();
-                if (score == -1) {
+                if (score == -1) {          // Invalid equation
                     submission.setTextColor(Color.RED);
-                } else if(score == 0 ) {
-                    submission.setTextColor(Color.BLUE);
-                } else if(score == -2 ) {
+//                } else if(score == 0 ) {
+//                    submission.setTextColor(Color.BLUE);
+                } else if(score == -2 ) {   // Incorrect format
                     submission.setTextColor(Color.YELLOW);
+                } else if (score == -3) {   // Already Used
+                    submission.setTextColor(Color.DKGRAY);
                 } else {
                     submission.setTextColor(Color.GREEN);
                     updateScore(score);
+                    if (!highScoreReached && db.checkForNewMathHighScore(currentScore)) {
+                        Toast.makeText(this, "New High Score!", Toast.LENGTH_LONG).show();
+                        highScoreReached = true;
+                    }
+                    solutionList.add(equationHandler.getEquationString());
                 }
                 submission.setTextSize(20);
                 submission.setBackgroundColor(Color.GRAY);

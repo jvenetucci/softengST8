@@ -3,7 +3,7 @@
     <string name="number_mode">Number Mode</string>
     <string name="math_mode">Math Mode</string>
     <string name="high_scores">High Scores</string>
-    <string name="number_high_score">Number Score</string>
+    <string name="number_high_score">Score</string>
     <string name="math_high_score">Math Score</string>
     <string name="solo">1 Player</string>
     <string name="comp">VS. AI</string>
@@ -14,7 +14,7 @@
     <string name="bluetoothButtonLabel">Bluetooth</string>
     <string name="score">Score:</string>
     <string name="timeUpDefault">00:00</string>
-    <string name="DefaultScore">000</string>
+    <string name="DefaultScore">0</string>
     <string name="tileString">Tile</string>
     <string name="submission_history_title">Submission History</string>
     <string name="shuffle">SHUFFLE</string>
@@ -26,4 +26,34 @@
     <string name="discover">Discover</string>
     <string name="paired_devices">Paired Devices</string>
     <string name="unpaired_devices">Unpaired Devices</string>
+    <string name="number_of_rounds">Number of Rounds</string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="cuttthroat">Cuttthroat</string>
+    <string name="basic">Basic</string>
+    <string name="welcome">Welcome To Sliding Tiles</string>
+    <string name="Key_Name">Name</string>
+    <string name="submit">Submit</string>
+    <string name="editText_main">Enter your name here</string>
+    <string name="Math_mode">Math Mode</string>
+    <string name="Player_name">Player Name</string>
+    <string name="Number_mode">Number Mode</string>
+    <string name="round">Round:</string>
+    <string name="player_1">Player 1: </string>
+    <string name="player_2">Player 2: </string>
+    <string name="wins">Wins: </string>
+    <string name="default_round_count">1</string>
+    <string name="default_wins">0</string>
+    <string name="next_round">Next Round</string>
+    <string name="resume">Resume</string>
+    <string name="exit">Exit</string>
+    <string name="game_win">Game Win</string>
+    <string name="win_count">win_count</string>
+    <string name="string_win_count">0 : 0</string>
+    <string name="win">You Win</string>
+    <string-array name="roundsToPlay">
+        <item> 1 </item>
+        <item> 3 </item>
+        <item> 5 </item>
+        <item> 7 </item>
+    </string-array>
 </resources>
