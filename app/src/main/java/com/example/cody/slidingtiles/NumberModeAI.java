@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class NumberModeAI extends AppCompatActivity {
 
@@ -210,10 +211,61 @@ public class NumberModeAI extends AppCompatActivity {
                 } else {
                     tile.setText(Integer.toString(number));
                 }
+                //number = determineAiMove();
+                //moveAITile(5);
                 AIBoardMap.put(number, tile);
                 tileCount ++;
             }
         }
+    }
+
+    //
+    protected int determineAiMove() {
+        AiState initial = new AiState();
+        PriorityQueue<AiState> frontier = new PriorityQueue<>();
+        Piece[] move = new Piece[4];
+        int count = 0;
+
+        for(int i = 0; i < move.length; ++i) {
+            move[i] = new Piece();
+        }
+
+        initial.copy(AITileMatrix);
+        initial.evaluate();
+        frontier.add(initial);
+
+        while(count < 2) {
+            if(frontier.peek() == null) {
+                System.out.println("Empty List");
+                break;
+            }
+
+            initial = frontier.poll();
+
+            //must pass number to switch with blank
+            //if(initial.goalCheck()) {
+            //    System.out.println("---Goal----")
+            //}
+
+            move = initial.determineActions();
+
+            for(int i = 0; i < initial.numActions; ++i) {
+                AiState child = new AiState();
+                child.copy(initial);
+                child.makeMove(move[i]);
+                child.setParent(initial);
+
+                if(frontier.contains(child)) {
+                    frontier.add(child);
+                }
+            }
+
+            ++count;
+        }
+
+        int result = initial.solution();
+
+        return result;
     }
 
     // Function that determines how far apart tile are.
