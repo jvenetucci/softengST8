@@ -96,8 +96,9 @@ public class MathMode extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         // -------------------------- inside dialog ---------------------------- //
+                        dialog.dismiss();
                         // custom dialog
-                        Dialog dialog1 = new Dialog(context);
+                        final Dialog dialog1 = new Dialog(context);
                         dialog1.getWindow().setGravity(Gravity.CENTER);
                         dialog1.setContentView(R.layout.popup_player_score);
                         dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -121,8 +122,9 @@ public class MathMode extends AppCompatActivity {
 
                         closeButton1.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View view) {
+                                dialog1.dismiss();
                                 finish();
-                                System.exit(0);
+                                //System.exit(0);
 
                             }
                         });

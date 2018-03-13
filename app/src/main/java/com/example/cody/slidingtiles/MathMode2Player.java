@@ -178,7 +178,7 @@ public class MathMode2Player extends AppCompatActivity {
                 byte[] bytes = "Exit".getBytes(Charset.defaultCharset());
                 writeWrapper(bytes);
                 finish();
-                System.exit(0);
+                //System.exit(0);
             }
         });
 
@@ -570,14 +570,18 @@ public class MathMode2Player extends AppCompatActivity {
                 nextRoundActivity();
             }
         });
-        mResultDialog.show();
+        if(!this.isFinishing()) {
+            mResultDialog.show();
+        }
     }
 
 //*    //Pause function called when remote device sends the message to pause.
     public void pauseFunction(){
         timeSwapBuff += timeInMilliseconds;
         customHandler.removeCallbacks(updateTimerThread);
-        mPauseDialog.show();
+        if(!this.isFinishing()) {
+            mPauseDialog.show();
+        }
     }
 //*/
     //resume function called when the remote device sends the message to resume
@@ -590,7 +594,7 @@ public class MathMode2Player extends AppCompatActivity {
     public void exitFunction() {
         mPauseDialog.dismiss();
         finish();
-        System.exit(0);
+        //System.exit(0);
     }
 
 
@@ -656,7 +660,7 @@ public class MathMode2Player extends AppCompatActivity {
                     Log.d(TAG, "new activity: fail to End game over input stream");
                 }
                 finish();
-                System.exit(0);
+                //System.exit(0);
             }
         }else {
             currentGameNumber++;
@@ -715,13 +719,8 @@ public class MathMode2Player extends AppCompatActivity {
                     opponentWins++;
                 }
                 if (currentGameNumber == numberOfGames) {
-                    if (playerWins > opponentWins) {
-                        Toast.makeText(context, "Player 1 wins!", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, "Player 2 wins!", Toast.LENGTH_LONG).show();
-                    }
                     finish();
-                    System.exit(0);
+                    //System.exit(0);
                 } else {
                     currentGameNumber++;
                     if (text.contains("BSC")) {
