@@ -13,7 +13,9 @@ public class AiState implements Comparable<AiState> {
     public int[][] board = new int[5][5];
     public int blanki;
     public int blankj;
+    public int tileNum;
     public int numActions;
+    public Piece move;
 
     //Constructor
     public AiState() {
@@ -28,6 +30,7 @@ public class AiState implements Comparable<AiState> {
         this.eval = 0;
         this.blanki = -1;
         this.blankj = -1;
+        this.tileNum = -1;
         this.numActions = 0;
     }
 
@@ -80,7 +83,7 @@ public class AiState implements Comparable<AiState> {
             if(this.parent == toCheck.parent && this.cost == toCheck.cost &&
                     this.depth == toCheck.depth && this.eval == toCheck.eval &&
                     this.blanki == toCheck.blanki && this.blankj == toCheck.blankj &&
-                    this.numActions == toCheck.numActions) {
+                    this.numActions == toCheck.numActions && this.tileNum == toCheck.tileNum) {
                 match = true;
             }
             else {
@@ -100,6 +103,7 @@ public class AiState implements Comparable<AiState> {
         result = prime * result + eval;
         result = prime * result + blanki;
         result = prime * result + blankj;
+        result = prime * result + tileNum;
         result = prime * result + numActions;
 
         return result;
@@ -125,6 +129,7 @@ public class AiState implements Comparable<AiState> {
         this.cost = toCopy.cost;
         this.depth = toCopy.depth;
         this.eval = toCopy.eval;
+        this.tileNum = toCopy.tileNum;
         this.numActions = toCopy.numActions;
     }
 
@@ -247,6 +252,9 @@ public class AiState implements Comparable<AiState> {
         int newRow = action.getRow();
         int newCol = action.getCol();
         int temp = board[newRow][newCol];
+        tileNum = temp;
+        move = new Piece();
+        move.copy(action);
 
         board[newRow][newCol] = board[blanki][blankj];
         board[blanki][blankj] = temp;
@@ -406,7 +414,7 @@ public class AiState implements Comparable<AiState> {
     }
 
     //
-    public int [][] solution() {
+    public Piece solution() {
         AiState grab = this;
         AiState current = this;
 
@@ -414,8 +422,9 @@ public class AiState implements Comparable<AiState> {
             current = grab;
             grab = grab.getParent();
         }
+        //System.out.println("---TILENUM: " + tileNum);
 
-        return current.board;
+        return current.move;
     }
 
 

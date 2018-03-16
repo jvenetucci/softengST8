@@ -122,11 +122,13 @@ public class NumberModeAI extends AppCompatActivity {
         copyMatrix(tileMatrix, AITileMatrix);
 
         //Move the contents of the 2-D array to the UI
-        board = findViewById(R.id.board);
-        displayBoardMatrixUI(board);
         AIboard = findViewById(R.id.AIboard);
         displayAIBoardMatrixUI(AIboard);
-        moveAITile(1);
+
+        board = findViewById(R.id.board);
+        displayBoardMatrixUI(board);
+
+        //moveAITile(1);
     }
 
     // Timer code
@@ -165,6 +167,13 @@ public class NumberModeAI extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         moveTile(v);
+                        Piece move = determineAiMove();
+                        moveAITile(move);
+
+                        if(isSolved(AITileMatrix)) {
+                            System.out.println("YOU LOSE");
+                            System.exit(0);
+                        }
                         if (isSolved(tileMatrix)) {
                             //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
                             // -------------------------- popup after completing the game---------------------------- //
@@ -238,7 +247,7 @@ public class NumberModeAI extends AppCompatActivity {
         initial.evaluate();
         frontier.add(initial);
 
-        while(count < 1) {
+        while(count < 1000) {
             if(frontier.peek() == null) {
                 System.out.println("Empty List");
                 break;
@@ -246,15 +255,12 @@ public class NumberModeAI extends AppCompatActivity {
 
             initial = frontier.poll();
 
-            //must pass number to switch with blank
-            //if(initial.goalCheck()) {
-            //    System.out.println("---Goal----")
-            //}
+            if(isSolved(initial.board)) {
+                System.out.println("--GOAL--");
+                return initial.move;
+            }
 
             move = initial.determineActions();
-
-            //TEST
-            //moveAITile(move[0]);
 
             for(int i = 0; i < initial.numActions; ++i) {
                 AiState child = new AiState();
@@ -262,7 +268,7 @@ public class NumberModeAI extends AppCompatActivity {
                 child.makeMove(move[i]);
                 child.setParent(initial);
 
-                if(frontier.contains(child)) {
+                if(!frontier.contains(child)) {
                     frontier.add(child);
                 }
             }
@@ -270,9 +276,7 @@ public class NumberModeAI extends AppCompatActivity {
             ++count;
         }
 
-        //AITileMatrix = initial.solution();
-
-        return move[0];
+        return initial.solution();
     }
 
     // Function that determines how far apart tile are.
@@ -328,7 +332,7 @@ public class NumberModeAI extends AppCompatActivity {
 
     // Manipulates the AIBoard in the UI
     // Swaps the tile with the number 'tileNumber' with the empty tile
-    public void moveAITile(int tileNumber){
+    public void moveAITile(Piece action){
     //public void moveAITile(Piece action) {
 
         //Do Something
@@ -338,6 +342,7 @@ public class NumberModeAI extends AppCompatActivity {
         //else
         //    System.out.println("TILE NOT FOUND");
 
+        int tileNumber = AITileMatrix[action.row][action.col];
         Button emptyTile = AIBoardMap.get(-1);
         Button tile = AIBoardMap.get(tileNumber);
         //Button tile = findViewById(R.id.AIbutton1);
@@ -346,16 +351,12 @@ public class NumberModeAI extends AppCompatActivity {
         //    System.out.println("TILE NULL");
         //Button tile = AIBoardMap.get(AITileMatrix[action.row][action.col]);
 
-        //System.out.println("TILE NUMBER: " + AITileMatrix[action.row][action.col]);
-        int [] coord = new int[2];
-        tile.getLocationInWindow(coord);
-
-        float currentX = coord[0];
-        float currentY = coord[1];
+        float currentX = tile.getX();
+        float currentY = tile.getY();
         float emptyY = emptyTile.getY();
         float emptyX = emptyTile.getX();
 
-        //swap(AITileMatrix, action.row, action.col, action.emptyRow, action.emptyCol);
+        swap(AITileMatrix, action.row, action.col, action.emptyRow, action.emptyCol);
 
         //Code that moves the Tiles
         tile.animate().x(emptyX).y(emptyY);

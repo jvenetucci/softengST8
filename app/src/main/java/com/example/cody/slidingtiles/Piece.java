@@ -26,4 +26,11 @@ public class Piece {
     public int getEmptyCol() {return emptyCol;}
     public void setEmptyRow(int emptyRow) {this.emptyRow = emptyRow;}
     public void setEmptyCol(int emptyCol) {this.emptyCol = emptyCol;}
+
+    public void copy(Piece toCopy) {
+        this.row = toCopy.row;
+        this.col = toCopy.col;
+        this.emptyRow = toCopy.emptyRow;
+        this.emptyCol = toCopy.emptyCol;
+    }
 }
