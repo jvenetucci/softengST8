@@ -55,6 +55,10 @@ public class NumberModeAI extends AppCompatActivity {
     GridLayout board;
     GridLayout AIboard;
 
+    //AI
+    int threshold = 0;
+    int min = 9999999;
+
     //Helper Classes
     BoardGenerator boardGen = new BoardGenerator();
 
@@ -166,14 +170,17 @@ public class NumberModeAI extends AppCompatActivity {
                 tile.setOnClickListener(new View.OnClickListener() { //Tie the moveTile method to onclick
                     @Override
                     public void onClick(View v) {
-                        moveTile(v);
-                        Piece move = determineAiMove();
-                        moveAITile(move);
+                        moveTile(v); //user move
+                        Piece move = determineAiMove(); //AI determines what move to make
+                        moveAITile(move); //AI move displayed
 
+                        //Check to see if AI has won
                         if(isSolved(AITileMatrix)) {
                             System.out.println("YOU LOSE");
                             System.exit(0);
                         }
+
+                        //Check to see if user has won
                         if (isSolved(tileMatrix)) {
                             //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
                             // -------------------------- popup after completing the game---------------------------- //
@@ -222,29 +229,45 @@ public class NumberModeAI extends AppCompatActivity {
                 } else {
                     tile.setText(Integer.toString(number));
                 }
-                //tile.setX(findViewById());
                 AIBoardMap.put(number, tile);
-
                 tileCount ++;
             }
         }
-        //Piece move = determineAiMove();
-        //moveAITile(move);
     }
 
-    //
+    //Control flow for the iterative deepening portion
     protected Piece determineAiMove() {
-        AiState initial = new AiState();
+        int count = 0;
+        Piece res = new Piece();
+        AiState test = new AiState();
+        test.copy(AITileMatrix);
+        test.evaluate();
+        threshold = test.eval;
+
+        while(count < 3) {
+            AiState initial = new AiState();
+            initial.copy(AITileMatrix);
+            initial.evaluate();
+            res = determineMove(initial);
+            ++count;
+        }
+        //Piece res = determineMove(4);
+        return res;
+    }
+
+    //set threshold to initial eval and then only expand nodes
+    //that are less than threshold. Once depth is reached start over
+    //with the min value of all evals greater than threshold
+    protected Piece determineMove(AiState initial) {
         PriorityQueue<AiState> frontier = new PriorityQueue<>();
         Piece[] move = new Piece[4];
         int count = 0;
+        min = 9999999;
 
-        for(int i = 0; i < move.length; ++i) {
+        for(int i = 0; i < 4; ++i) {
             move[i] = new Piece();
         }
 
-        initial.copy(AITileMatrix);
-        initial.evaluate();
         frontier.add(initial);
 
         while(count < 1000) {
@@ -257,23 +280,36 @@ public class NumberModeAI extends AppCompatActivity {
 
             if(isSolved(initial.board)) {
                 System.out.println("--GOAL--");
-                return initial.move;
+                return initial.result;
             }
 
             move = initial.determineActions();
 
-            for(int i = 0; i < initial.numActions; ++i) {
+            //test
+            if(initial.getParent() == null)
+                initial.result.copy(move[0]);
+
+            for(int i = 0; i < initial.numActions && count != 1; ++i) {
                 AiState child = new AiState();
                 child.copy(initial);
                 child.makeMove(move[i]);
                 child.setParent(initial);
 
-                if(!frontier.contains(child)) {
+                if(!frontier.contains(child) && child.eval < threshold) {
                     frontier.add(child);
                 }
+                if(child.eval > threshold && child.eval < min)
+                    min = child.eval;
             }
 
             ++count;
+        }
+
+        //handles case of when empty frontier happens without altering min
+        if(min < 1000000)
+            threshold = min;
+        else {
+            threshold += 10;
         }
 
         return initial.solution();
@@ -333,23 +369,9 @@ public class NumberModeAI extends AppCompatActivity {
     // Manipulates the AIBoard in the UI
     // Swaps the tile with the number 'tileNumber' with the empty tile
     public void moveAITile(Piece action){
-    //public void moveAITile(Piece action) {
-
-        //Do Something
-
-        //if(AIBoardMap.containsKey(AITileMatrix[action.row][action.col]))
-        //    System.out.println("TILE FOUND");
-        //else
-        //    System.out.println("TILE NOT FOUND");
-
         int tileNumber = AITileMatrix[action.row][action.col];
         Button emptyTile = AIBoardMap.get(-1);
         Button tile = AIBoardMap.get(tileNumber);
-        //Button tile = findViewById(R.id.AIbutton1);
-        //Button emptyTile = findViewById(R.id.AIbutton25);
-        //if(tile == null)
-        //    System.out.println("TILE NULL");
-        //Button tile = AIBoardMap.get(AITileMatrix[action.row][action.col]);
 
         float currentX = tile.getX();
         float currentY = tile.getY();

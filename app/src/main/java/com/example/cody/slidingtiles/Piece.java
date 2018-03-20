@@ -4,6 +4,7 @@ package com.example.cody.slidingtiles;
  * Created by cody on 3/12/18.
  */
 
+//class holds location of move and empty space
 public class Piece {
     public int row;
     public int col;
@@ -26,6 +27,13 @@ public class Piece {
     public int getEmptyCol() {return emptyCol;}
     public void setEmptyRow(int emptyRow) {this.emptyRow = emptyRow;}
     public void setEmptyCol(int emptyCol) {this.emptyCol = emptyCol;}
+
+    public Piece() {
+        row = -1;
+        col = -1;
+        emptyRow = -1;
+        emptyCol = -1;
+    }
 
     public void copy(Piece toCopy) {
         this.row = toCopy.row;

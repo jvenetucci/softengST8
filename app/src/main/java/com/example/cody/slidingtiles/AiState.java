@@ -1,7 +1,5 @@
 package com.example.cody.slidingtiles;
 
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.lang.Math;
 import java.lang.Object;
 
@@ -13,9 +11,8 @@ public class AiState implements Comparable<AiState> {
     public int[][] board = new int[5][5];
     public int blanki;
     public int blankj;
-    public int tileNum;
     public int numActions;
-    public Piece move;
+    public Piece result = new Piece();
 
     //Constructor
     public AiState() {
@@ -30,7 +27,6 @@ public class AiState implements Comparable<AiState> {
         this.eval = 0;
         this.blanki = -1;
         this.blankj = -1;
-        this.tileNum = -1;
         this.numActions = 0;
     }
 
@@ -60,7 +56,7 @@ public class AiState implements Comparable<AiState> {
         return diff;
     }
 
-    //
+    //Overrided equals function
     @Override public boolean equals(Object obj) {
         if(this == obj)
             return true;
@@ -83,7 +79,9 @@ public class AiState implements Comparable<AiState> {
             if(this.parent == toCheck.parent && this.cost == toCheck.cost &&
                     this.depth == toCheck.depth && this.eval == toCheck.eval &&
                     this.blanki == toCheck.blanki && this.blankj == toCheck.blankj &&
-                    this.numActions == toCheck.numActions && this.tileNum == toCheck.tileNum) {
+                    this.numActions == toCheck.numActions && this.result.row == toCheck.result.row &&
+                    this.result.col == toCheck.result.col && this.result.emptyRow == toCheck.result.emptyRow &&
+                    this.result.emptyCol == toCheck.result.emptyCol) {
                 match = true;
             }
             else {
@@ -93,7 +91,7 @@ public class AiState implements Comparable<AiState> {
         return match;
     }
 
-    //
+    //overrides hash function
     @Override public int hashCode() {
         int result = 1;
         int prime = 31;
@@ -103,13 +101,12 @@ public class AiState implements Comparable<AiState> {
         result = prime * result + eval;
         result = prime * result + blanki;
         result = prime * result + blankj;
-        result = prime * result + tileNum;
         result = prime * result + numActions;
 
         return result;
     }
 
-    //
+    //copies board from outside source to board in class
     public void copy(int [][] toCopy) {
         for(int i = 0; i < 5; ++i) {
             for(int j = 0; j < 5; ++j) {
@@ -122,18 +119,18 @@ public class AiState implements Comparable<AiState> {
         }
     }
 
-    //
+    //Copies entire class
     public void copy(AiState toCopy) {
         this.copy(toCopy.board);
+        this.result.copy(toCopy.result);
         this.parent = toCopy.getParent();
         this.cost = toCopy.cost;
         this.depth = toCopy.depth;
         this.eval = toCopy.eval;
-        this.tileNum = toCopy.tileNum;
         this.numActions = toCopy.numActions;
     }
 
-    //
+    //determines how many moves are available and stores all possible moves
     public Piece [] determineActions() {
         Piece[] move = new Piece[4];
         for(int i = 0; i < move.length; ++i) {
@@ -247,14 +244,13 @@ public class AiState implements Comparable<AiState> {
         return move;
     }
 
-    //
+    //Expands node and makes change to class
     public int makeMove(Piece action) {
         int newRow = action.getRow();
         int newCol = action.getCol();
         int temp = board[newRow][newCol];
-        tileNum = temp;
-        move = new Piece();
-        move.copy(action);
+
+        this.result.copy(action);
 
         board[newRow][newCol] = board[blanki][blankj];
         board[blanki][blankj] = temp;
@@ -270,7 +266,7 @@ public class AiState implements Comparable<AiState> {
         return 0;
     }
 
-    //
+    //evaluates board state using manhattan distance + linear conflicts
     public void evaluate() {
         int returnVal = 0;
         int hold = 0;
@@ -401,19 +397,17 @@ public class AiState implements Comparable<AiState> {
             }
         }
 
-        //        System.out.println("Horizontal Conflict: " + horzConflict);
-        //        System.out.println("Vertical Conflict: " + vertConflict);
-
         returnVal += 2 * (horzConflict + vertConflict);
 
         cost = returnVal;
+
         //Add depth to eval to implement A*
         returnVal += depth;
         eval = returnVal;
 
     }
 
-    //
+    //travels through parent nodes back to node before initial and returns the move that created that state
     public Piece solution() {
         AiState grab = this;
         AiState current = this;
@@ -422,9 +416,8 @@ public class AiState implements Comparable<AiState> {
             current = grab;
             grab = grab.getParent();
         }
-        //System.out.println("---TILENUM: " + tileNum);
 
-        return current.move;
+        return current.result;
     }
 
 
