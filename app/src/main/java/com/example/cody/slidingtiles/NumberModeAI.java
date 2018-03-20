@@ -103,8 +103,9 @@ public class NumberModeAI extends AppCompatActivity {
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog.dismiss();
                         finish();
-                        System.exit(0);
+                        //System.exit(0);
                     }
                 });
                 resumeButton.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +186,7 @@ public class NumberModeAI extends AppCompatActivity {
                             //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
                             // -------------------------- popup after completing the game---------------------------- //
 
-                            Dialog dialog1 = new Dialog(context);
+                            final Dialog dialog1 = new Dialog(context);
                             dialog1.getWindow().setGravity(Gravity.CENTER);
                             dialog1.setContentView(R.layout.you_win);
                             dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -197,8 +198,9 @@ public class NumberModeAI extends AppCompatActivity {
 
                             closeButton1.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View view) {
+                                    dialog1.dismiss();
                                     finish();
-                                    System.exit(0);
+                                    //System.exit(0);
 
                                 }
                             });
