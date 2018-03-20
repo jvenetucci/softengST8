@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class NumberModeAI extends AppCompatActivity {
 
@@ -29,7 +30,7 @@ public class NumberModeAI extends AppCompatActivity {
     float yTileDistance = 0;
     int emptyTileRowIndex;
     int emptyTileColIndex;
-    private HashMap<Integer, Button> AIBoardMap = new HashMap<>();
+    public HashMap<Integer, Button> AIBoardMap = new HashMap<>();
 
 
     // Timer variables
@@ -53,6 +54,10 @@ public class NumberModeAI extends AppCompatActivity {
     Button emptyTileButton;
     GridLayout board;
     GridLayout AIboard;
+
+    //AI
+    int threshold = 0;
+    int min = 9999999;
 
     //Helper Classes
     BoardGenerator boardGen = new BoardGenerator();
@@ -122,10 +127,13 @@ public class NumberModeAI extends AppCompatActivity {
         copyMatrix(tileMatrix, AITileMatrix);
 
         //Move the contents of the 2-D array to the UI
-        board = findViewById(R.id.board);
-        displayBoardMatrixUI(board);
         AIboard = findViewById(R.id.AIboard);
         displayAIBoardMatrixUI(AIboard);
+
+        board = findViewById(R.id.board);
+        displayBoardMatrixUI(board);
+
+        //moveAITile(1);
     }
 
     // Timer code
@@ -159,10 +167,21 @@ public class NumberModeAI extends AppCompatActivity {
                 } else {
                     tile.setText(Integer.toString(tileMatrix[i][j]));
                 }
+
                 tile.setOnClickListener(new View.OnClickListener() { //Tie the moveTile method to onclick
                     @Override
                     public void onClick(View v) {
-                        moveTile(v);
+                        moveTile(v); //user move
+                        Piece move = determineAiMove(); //AI determines what move to make
+                        moveAITile(move); //AI move displayed
+
+                        //Check to see if AI has won
+                        if(isSolved(AITileMatrix)) {
+                            System.out.println("YOU LOSE");
+                            System.exit(0);
+                        }
+
+                        //Check to see if user has won
                         if (isSolved(tileMatrix)) {
                             //Toast.makeText(v.getContext(), "YOU WIN!", Toast.LENGTH_SHORT).show();
                             // -------------------------- popup after completing the game---------------------------- //
@@ -218,6 +237,86 @@ public class NumberModeAI extends AppCompatActivity {
         }
     }
 
+    //Control flow for the iterative deepening portion
+    protected Piece determineAiMove() {
+        int count = 0;
+        Piece res = new Piece();
+        AiState test = new AiState();
+        test.copy(AITileMatrix);
+        test.evaluate();
+        threshold = test.eval;
+
+        while(count < 3) {
+            AiState initial = new AiState();
+            initial.copy(AITileMatrix);
+            initial.evaluate();
+            res = determineMove(initial);
+            ++count;
+        }
+        //Piece res = determineMove(4);
+        return res;
+    }
+
+    //set threshold to initial eval and then only expand nodes
+    //that are less than threshold. Once depth is reached start over
+    //with the min value of all evals greater than threshold
+    protected Piece determineMove(AiState initial) {
+        PriorityQueue<AiState> frontier = new PriorityQueue<>();
+        Piece[] move = new Piece[4];
+        int count = 0;
+        min = 9999999;
+
+        for(int i = 0; i < 4; ++i) {
+            move[i] = new Piece();
+        }
+
+        frontier.add(initial);
+
+        while(count < 1000) {
+            if(frontier.peek() == null) {
+                System.out.println("Empty List");
+                break;
+            }
+
+            initial = frontier.poll();
+
+            if(isSolved(initial.board)) {
+                System.out.println("--GOAL--");
+                return initial.result;
+            }
+
+            move = initial.determineActions();
+
+            //test
+            if(initial.getParent() == null)
+                initial.result.copy(move[0]);
+
+            for(int i = 0; i < initial.numActions && count != 1; ++i) {
+                AiState child = new AiState();
+                child.copy(initial);
+                child.makeMove(move[i]);
+                child.setParent(initial);
+
+                if(!frontier.contains(child) && child.eval < threshold) {
+                    frontier.add(child);
+                }
+                if(child.eval > threshold && child.eval < min)
+                    min = child.eval;
+            }
+
+            ++count;
+        }
+
+        //handles case of when empty frontier happens without altering min
+        if(min < 1000000)
+            threshold = min;
+        else {
+            threshold += 10;
+        }
+
+        return initial.solution();
+    }
+
     // Function that determines how far apart tile are.
     // The distance is dependent on screen size.
     // This should be called in the moveTile() method.
@@ -271,8 +370,8 @@ public class NumberModeAI extends AppCompatActivity {
 
     // Manipulates the AIBoard in the UI
     // Swaps the tile with the number 'tileNumber' with the empty tile
-    public void moveAITile(int tileNumber){
-        //Do Something
+    public void moveAITile(Piece action){
+        int tileNumber = AITileMatrix[action.row][action.col];
         Button emptyTile = AIBoardMap.get(-1);
         Button tile = AIBoardMap.get(tileNumber);
 
@@ -280,6 +379,8 @@ public class NumberModeAI extends AppCompatActivity {
         float currentY = tile.getY();
         float emptyY = emptyTile.getY();
         float emptyX = emptyTile.getX();
+
+        swap(AITileMatrix, action.row, action.col, action.emptyRow, action.emptyCol);
 
         //Code that moves the Tiles
         tile.animate().x(emptyX).y(emptyY);
