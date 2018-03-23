@@ -1,5 +1,9 @@
 package com.example.cody.slidingtiles;
 
+/** adapted code from following youtube tutorial from CodingWithMitch
+ * https://github.com/mitchtabian/Sending-and-Receiving-Data-with-Bluetooth
+ */
+
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;

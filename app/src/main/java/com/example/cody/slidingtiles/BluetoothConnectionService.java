@@ -16,8 +16,8 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-/**
- * Created by User on 12/21/2016.
+/** adapted code from following youtube tutorial from CodingWithMitch
+ * https://github.com/mitchtabian/Sending-and-Receiving-Data-with-Bluetooth
  */
 
 public class BluetoothConnectionService {
